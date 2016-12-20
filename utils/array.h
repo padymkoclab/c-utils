@@ -1,7 +1,9 @@
-/* Copyright 2016 setivolkylany */
+/*
 
-#ifndef ARRAY_H
-#define ARRAY_H
+ */
+
+#ifndef __ARRAY_H__
+#define __ARRAY_H__
 
 #include <stdio.h>
 
@@ -24,4 +26,4 @@ float sumFloatArray(float array[], int length) {
 }
 
 
-#endif // ARRAY_H
+#endif // __ARRAY_H__

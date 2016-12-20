@@ -8,8 +8,10 @@
 
 #define MAX_RANDOM_WORD_LENGTH 20
 
+char* randomWord
 
-char get_random_item_array(char *array, size_t length) {
+
+char getRandomStringFromArray(char *array, size_t length) {
     int index = (rand() % length);
     return array[index];
 }
@@ -27,7 +29,7 @@ char* get_random_word() {
     word = malloc(sizeof(char) * word_length);
 
     for (int i = 0; i < word_length; ++i) {
-        word[i] = get_random_item_array(string, strlen(string));
+        word[i] = getRandomStringFromArray(string, strlen(string));
     }
 
     free(string);
