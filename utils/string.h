@@ -11,27 +11,16 @@
 #ifndef __STRING_H__
 #define __STRING_H__
 
-
-/*
-    A logical type
- */
-typedef enum {
-    false,
-    true,
-} bool;
-
-
-typedef struct _StringWithLength {
-    char *str;
-    size_t len;
-} StringWithLength;
+#ifndef DIGITS
+#define DIGITS "0123456789"
+#endif
 
 
 /*
     A Struct for hold 2D-array with count items
  */
 typedef struct _ListStringsWithLength {
-    char **array;
+    char **list;
     size_t length;
 } ListStringsWithLength;
 
@@ -48,50 +37,59 @@ char* get_characters_by_codes_range(int start_code, int end_code) {
 }
 
 
-ListStringsWithLength* splitStringToList(char *original_string, char *delimiter) {
+#ifndef ASCII_LOWERCESE
+#define ASCII_LOWERCESE get_characters_by_codes_range(97, 123)
+#endif
+
+
+#ifndef ASCII_UPPERCESE
+#define ASCII_UPPERCESE get_characters_by_codes_range(65, 91)
+#endif
+
+
+#ifndef ASCII_LETTERS
+#define ASCII_LETTERS strcat(ASCII_UPPERCESE, ASCII_LOWERCESE)
+#endif
+
+
+ListStringsWithLength* splitStringToListString(char *text, char *delimiter) {
 
     int i = 0;
-    char *word, *string;
-    char **array_strings;
-    ListStringsWithLength *string_list = malloc(sizeof(ListStringsWithLength));
+    char *word, **list;
+    ListStringsWithLength *list_strings_with_length = malloc(sizeof(ListStringsWithLength));
 
-    array_strings = malloc(sizeof(char) * 10000);
+    size_t text_length = strlen(text);
+    list = malloc(sizeof(char) * text_length);
 
-    size_t original_string_length = strlen(original_string);
+    if (strstr(text, delimiter) == NULL || text_length <= strlen(delimiter)) {
 
-    string = malloc(original_string_length * sizeof(char));
+        list[0] = malloc(sizeof(char) * text_length);
+        strcpy(list[0], text);
 
-    strcpy(string, original_string);
+        list_strings_with_length->length = 1;
+        list_strings_with_length->list = list;
 
-    word = strtok(string, delimiter);
+        return list_strings_with_length;
+    }
+
+    char *copy_text = malloc(text_length * sizeof(char) + 1);
+    strcpy(copy_text, text);
+
+    word = strtok(copy_text, delimiter);
+
     while (word != NULL) {
-        array_strings[i] = malloc(strlen(word) * sizeof(char));
-        array_strings[i] = word;
+        list[i] = malloc(strlen(word) * sizeof(char));
+        strcpy(list[i], word);
         word = strtok(NULL, delimiter);
         ++i;
     }
 
-    string_list->array = array_strings;
-    string_list->length = i;
+    list_strings_with_length->list = list;
+    list_strings_with_length->length = i;
 
-    return string_list;
+    return list_strings_with_length;
 
 };
-
-
-char* get_ascii_lowercase() {
-    return get_characters_by_codes_range(97, 123);
-}
-
-
-char* get_ascii_uppercase() {
-    return get_characters_by_codes_range(65, 91);
-}
-
-
-char* get_ascii_letters() {
-    return strcat(get_ascii_uppercase(), get_ascii_lowercase());
-}
 
 
 char* toUpperString(char *string) {
@@ -244,6 +242,49 @@ void printListStringsWithLength(ListStringsWithLength *list_with_length) {
         printf("%d. %s\n", i + 1, list_with_length->list[i]);
     }
 }
+
+
+bool startSwithString(char *string, char *prefix) {
+    size_t prefix_len = strlen(prefix);
+    if (strlen(string) >= prefix_len) {
+        return 0 == strncmp(string, prefix, prefix_len);
+    }
+    return false;
+}
+
+
+bool endSwithString(char *string, char *ending) {
+    size_t ending_len = strlen(ending);
+    size_t string_len = strlen(string);
+    if (string_len >= ending_len) {
+        return 0 == strncmp(string + (string_len - ending_len), ending, ending_len);
+    }
+    return false;
+}
+
+
+bool containsString(char *string, char *substring) {
+    size_t substring_len = strlen(substring);
+    if (strlen(string) >= substring_len) {
+        return 0 != strstr(string, substring);
+    }
+    return false;
+}
+
+
+
+bool isNumericString(char *string) {
+    int i = 0;
+    do {
+        if (isdigit(string[i]) == 0) {
+            return false;
+        };
+        i++;
+    } while (string[i] != '\0');
+    return true;
+}
+
+
 
 
 #endif // __STRING_H__
