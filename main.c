@@ -1,55 +1,8 @@
 
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+// #include <string.h>
 
-
-static char *old_string;
-
-char* strsplit(char *string, const char *delimiter) {
-
-    char *token;
-
-    if (string == NULL) {
-        string = old_string;
-    }
-
-    string += strspn(string, delimiter);
-
-    token = string;
-
-    string = strpbrk(string, delimiter);
-    puts(token);
-    return token;
-}
-
-
-void reverseString(char *string) {
-    const size_t string_len = strlen(string);
-    char *copy_;
-    copy_ = calloc(string_len, sizeof(char));
-    strcpy(copy_, string);
-
-    for (int i = 0; i < string_len; ++i) {
-        string[i] = copy_[string_len - i - 1];
-    }
-}
-
-
-void reverseIntArray(int *array, const size_t length) {
-    int *copy_;
-    copy_ = calloc(length, sizeof(int));
-    copy_ = array;
-
-    for (int i = 0; i < length; ++i) {
-        array[i] = copy_[length - i - 1];
-    }
-}
-
-
-void shuffleIntArray(int *array, const size_t length) {
-
-}
+#include "./utils/string.h"
 
 
 int main (void)
@@ -68,19 +21,19 @@ int main (void)
     // printf("%d\n", "A" - "AAdsd");
     // printf("index = %s\n", strchr(temp, 'c'));
 
-    int arr[] = {1,2,3,4,5};
 
-    for (int i = 0; i < 5; ++i) {
-        printf("%d", arr[i]);
-    }
+    char str[] = "Following is the declaratison for strncmp() function.";
 
-    reverseIntArray(arr, 5);
-    puts("");
+    printf("%d\n", indexOfRightString(str, "str"));
+    printf("%d\n", indexOfRightString(str, " str"));
+    printf("%d\n", indexOfRightString(str, "str "));
+    printf("%d\n", indexOfRightString(str, "()"));
+    printf("%d\n", indexOfRightString(str, "ll"));
+    printf("%d\n", indexOfRightString(str, "lo"));
 
-    for (int i = 0; i < 5; ++i) {
-        printf("%d", arr[i]);
-    };
-    puts("");
+    puts(str);
+    reverseString(str);
+    puts(str);
 
     return 0;
 }

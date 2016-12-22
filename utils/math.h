@@ -3,8 +3,13 @@
  */
 
 
-#ifndef __MATH_H__
-#define __MATH_H__
+#ifndef __MATH_HASS__
+#define __MATH_HASS__
+
+#include <math.h>
+
+#include "./numbers.h"
+#include "./array.h"
 
 
 unsigned long int factorial(const long int n) {
@@ -22,14 +27,32 @@ static unsigned long int get_value_sequence_fibonacci(const unsigned int index) 
     return get_value_sequence_fibonacci(index - 1) + get_value_sequence_fibonacci(index - 2);
 }
 
-unsigned long int* fibonacci(const int length) {
-    unsigned long int* array;
-    array = malloc(length * sizeof(unsigned long int));
+bool fibonacci(unsigned long int* array, const int length) {
     for (int i = 0; i < length; ++i) {
         array[i] = get_value_sequence_fibonacci(i);
     }
-    return array;
+    return 0;
 }
 
 
-#endif // __MATH_H__
+bool isArmstrongNumber(const unsigned int number) {
+    size_t len = getLengthIntNumber(number);
+    char *buffer;
+    buffer = malloc(len * sizeof(char) + 1);
+
+    sprintf(buffer, "%d", number);
+
+    unsigned long int sum = 0;
+
+    for (int i = 0; i < len; ++i) {
+        cube = (buffer[i] - '0') * (buffer[i] - '0') * (buffer[i] - '0');
+        sum += cube;
+    }
+
+    free(buffer);
+
+    return sum == number;
+}
+
+
+#endif // __MATH_HASS__

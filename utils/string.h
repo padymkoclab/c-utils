@@ -25,7 +25,7 @@ typedef struct _ListStringsWithLength {
 } ListStringsWithLength;
 
 
-char* get_characters_by_codes_range(int start_code, int end_code) {
+char* getCharactersByCodesRange(int start_code, int end_code) {
     char *string;
     int i = 0;
     string = malloc(sizeof(char) * end_code - start_code);
@@ -37,18 +37,18 @@ char* get_characters_by_codes_range(int start_code, int end_code) {
 }
 
 
-#ifndef ASCII_LOWERCESE
-#define ASCII_LOWERCESE get_characters_by_codes_range(97, 123)
+#ifndef ASCII_LOWERCASE
+#define ASCII_LOWERCASE getCharactersByCodesRange(97, 123)
 #endif
 
 
-#ifndef ASCII_UPPERCESE
-#define ASCII_UPPERCESE get_characters_by_codes_range(65, 91)
+#ifndef ASCII_UPPERCASE
+#define ASCII_UPPERCASE getCharactersByCodesRange(65, 91)
 #endif
 
 
 #ifndef ASCII_LETTERS
-#define ASCII_LETTERS strcat(ASCII_UPPERCESE, ASCII_LOWERCESE)
+#define ASCII_LETTERS strcat(ASCII_UPPERCASE, ASCII_LOWERCASE)
 #endif
 
 
@@ -92,78 +92,92 @@ ListStringsWithLength* splitStringToListString(char *text, char *delimiter) {
 };
 
 
-char* toUpperString(char *string) {
+bool toUpperCase(char *str) {
     int i = 0;
     do {
-        string[i] = toupper(string[i]);
+        str[i] = toupper(str[i]);
         ++i;
-    } while (string[i] != '\0');
-    return string;
+    } while (str[i] != '\0');
+    return true;
 }
 
 
-char* toLowerString(char *string) {
+bool toLowerCase(char *str) {
     int i = 0;
     do {
-        string[i] = tolower(string[i]);
+        str[i] = tolower(str[i]);
         ++i;
-    } while (string[i] != '\0');
-    return string;
+    } while (str[i] != '\0');
+    return true;
 }
 
 
-char* toTitleString(char *string) {
+bool toTitleCase(char *str) {
     int i = 0;
     bool is_new_word = true;
 
-    while (string[i]) {
+    while (str[i]) {
         if (is_new_word == true) {
-            string[i] = toupper(string[i]);
+            str[i] = toupper(str[i]);
             is_new_word = false;
         } else {
-            if (string[i] == ' ') {
+            if (str[i] == ' ') {
                 is_new_word = true;
                 ++i;
                 continue;
             } else {
-                string[i] = tolower(string[i]);
+                str[i] = tolower(str[i]);
             }
         }
         ++i;
     }
-
-    return string;
+    return true;
 }
 
 
-char* toCapitalizeString(char *string) {
+bool toCapitalizeCase(char *str) {
     int i = 0;
-    while (string[i]) {
+    while (str[i]) {
         if (i > 0) {
-            string[i] = tolower(string[i]);
+            str[i] = tolower(str[i]);
         } else {
-            string[i] = toupper(string[i]);
+            str[i] = toupper(str[i]);
         }
         ++i;
     }
-    return string;
+    return true;
 }
 
 
-char* toSwapCaseString(char *string) {
+bool toSwapCase(char *str) {
     int i = 0;
     do {
-        if (isupper(string[i]) != 0) {
-            string[i] = tolower(string[i]);
-        } else if (islower(string[i]) != 0) {
-            string[i] = toupper(string[i]);
+        if (isupper(str[i]) != 0) {
+            str[i] = tolower(str[i]);
+        } else if (islower(str[i]) != 0) {
+            str[i] = toupper(str[i]);
         }
         ++i;
-    } while (string[i] != '\0');
-    return string;
+    } while (str[i] != '\0');
+    return true;
 }
 
 
+bool toCamelCase(char *str) {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (i % 2 == 0) {
+            str[i] = tolower(str[i]);
+        } else {
+            str[i] = toupper(str[i]);
+        }
+        ++i;
+    }
+    return true;
+}
+
+
+// Need rewrite for change object in-place
 /*
     Parse a text and return pointer to a ListStringsWithLength words and count it
  */
@@ -226,8 +240,8 @@ ListStringsWithLength* getWords(char *text) {
 }
 
 
-int getCountWords(char *text) {
-    ListStringsWithLength *list_with_length = getWords(text);
+unsigned int getCountWords(char *str) {
+    ListStringsWithLength *list_with_length = getWords(str);
     return list_with_length->length;
 }
 
@@ -244,47 +258,177 @@ void printListStringsWithLength(ListStringsWithLength *list_with_length) {
 }
 
 
-bool startSwithString(char *string, char *prefix) {
+bool startSwithString(char *str, char *prefix) {
     size_t prefix_len = strlen(prefix);
-    if (strlen(string) >= prefix_len) {
-        return 0 == strncmp(string, prefix, prefix_len);
+    if (strlen(str) >= prefix_len) {
+        return 0 == strncmp(str, prefix, prefix_len);
     }
     return false;
 }
 
 
-bool endSwithString(char *string, char *ending) {
+bool endSwithString(char *str, char *ending) {
     size_t ending_len = strlen(ending);
-    size_t string_len = strlen(string);
-    if (string_len >= ending_len) {
-        return 0 == strncmp(string + (string_len - ending_len), ending, ending_len);
+    size_t str_len = strlen(str);
+    if (str_len >= ending_len) {
+        return 0 == strncmp(str + (str_len - ending_len), ending, ending_len);
     }
     return false;
 }
 
 
-bool containsString(char *string, char *substring) {
-    size_t substring_len = strlen(substring);
-    if (strlen(string) >= substring_len) {
-        return 0 != strstr(string, substring);
+bool containsString(char *str, char *substr) {
+    size_t substr_len = strlen(substr);
+    if (strlen(str) >= substr_len) {
+        return 0 != strstr(str, substr);
     }
     return false;
 }
 
 
-
-bool isNumericString(char *string) {
+/**
+ * Return true is whole string contains only digits, otherwise return false.
+ * @param  str string
+ * @return     bool
+ */
+bool isNumericString(char *str) {
     int i = 0;
     do {
-        if (isdigit(string[i]) == 0) {
+        if (isdigit(str[i]) == 0) {
             return false;
         };
         i++;
-    } while (string[i] != '\0');
+    } while (str[i] != '\0');
     return true;
 }
 
 
+bool reverseString(char *str) {
+
+    const size_t str_len = strlen(str);
+    const float half_len = str_len / 2;
+
+    // FIXME: convert float to int with floor()
+    //
+    // half_len = (half_len % 2 == 0) ? half_len : half_len - 1;
+    // const int middle_len;
+
+    for (int i = 0; i < str_len; ++i) {
+        str[i] = str[str_len - i - 1];
+    }
+
+    return 0;
+}
+
+
+bool sliceString(char *str, const unsigned int slice_from, const unsigned int slice_to) {
+
+    unsigned int slice_to_copy = slice_to;
+
+    size_t new_len_string = slice_to_copy - slice_from;
+
+    if (slice_from < 0 || slice_to < 0 || (slice_from > slice_to)) return false;
+
+    size_t len_string = strlen(str);
+
+    if (slice_to_copy > len_string) slice_to_copy = len_string;
+
+    char *buffer;
+    buffer = calloc(new_len_string, sizeof(char));
+
+    memmove(str, str + slice_from, new_len_string);
+    strncpy(buffer, str, new_len_string);
+    strcpy(str, buffer);
+
+    free(buffer);
+
+    return false;
+}
+
+
+unsigned int indexOfLeftString(const char *str, const char *substr) {
+
+    size_t str_len = strlen(str);
+    size_t substr_len = strlen(substr);
+
+    if (substr_len > str_len) return -1;
+
+    char *found_substr = strstr(str, substr);
+
+    if (found_substr != NULL) {
+        return str_len - strlen(found_substr);
+    }
+    return -1;
+}
+
+// not working
+unsigned int indexOfRightString(const char *str, const char *substr) {
+
+    size_t str_len = strlen(str);
+    size_t substr_len = strlen(substr);
+
+    if (substr_len > str_len) return -1;
+
+    char *found_substr = strstr(str, substr);
+
+    if (found_substr != NULL) return str_len - strlen(found_substr);
+
+    return -1;
+}
+
+
+unsigned int getCountSubstrOfString(char *str, char *substr) {
+
+    size_t str_len = strlen(str);
+    size_t substr_len = strlen(substr);
+    unsigned int count = 0;
+
+    if (substr_len > str_len) return -1;
+
+    char *found_substr;
+    found_substr = strstr(str, substr);
+    while (found_substr != NULL) {
+        found_substr = strstr(found_substr + substr_len, substr);
+        ++count;
+    }
+    return count;
+}
+
+
+/*
+ * Uncompleted
+ * Strip string from left, right or both.
+ */
+bool stripString(char *str, char *substr, char action) {
+
+    if (action == 'b' || action == 'l' || action == 'r') {
+
+    }
+
+    return 0;
+}
+
+
+/*
+ * Uncompleted
+ */
+static char *old_string;
+char* strsplit(char *string, const char *delimiter) {
+
+    char *token;
+
+    if (string == NULL) {
+        string = old_string;
+    }
+
+    string += strspn(string, delimiter);
+
+    token = string;
+
+    string = strpbrk(string, delimiter);
+    puts(token);
+    return token;
+}
 
 
 #endif // __STRING_H__
