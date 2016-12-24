@@ -45,12 +45,22 @@ getCharactersByCodesRange(char *buffer, const unsigned int start_code, const uns
     return 0;
 }
 
+/**
+ * char str[] = "Following is the declaratison for strncmp() functin";
 
-static char *_copy_text;
+    char *token;
+    token = splitString(str, " ");
+
+    while (token != NULL) {
+        puts(token);
+        token = splitString(NULL, " ");
+    }
+ */
+static char *_copy_text_for_split;
 char *
 splitString(char *text, char *delimiter) {
 
-    if (delimiter == '\0') return NULL;
+    if (strcmp(delimiter, "") == 0) return NULL;
 
     size_t len_delimiter = strlen(delimiter);
     char *token;
@@ -58,42 +68,50 @@ splitString(char *text, char *delimiter) {
 
     if (text != NULL) {
 
-        _copy_text = calloc(strlen(text), sizeof(char));
-        strcpy(_copy_text, text);
+        _copy_text_for_split = calloc(strlen(text), sizeof(char));
+        strcpy(_copy_text_for_split, text);
 
-        _copy_text = strpbrk(_copy_text, delimiter);
+        _copy_text_for_split = strpbrk(_copy_text_for_split, delimiter);
 
-        if (_copy_text == NULL) return NULL;
+        if (_copy_text_for_split == NULL) return text;
 
-        length_token = strlen(text) - strlen(_copy_text);
+        length_token = strlen(text) - strlen(_copy_text_for_split);
 
         token = calloc(length_token, sizeof(char));
 
         strncpy(token, text, length_token);
 
-        _copy_text += len_delimiter;
+        _copy_text_for_split += len_delimiter;
 
         return token;
+
     }
 
-    size_t _copy_text_length = strlen(_copy_text);
+    if (_copy_text_for_split == NULL) return NULL;
+
+    size_t _copy_text_length = strlen(_copy_text_for_split);
     char *temp;
     temp = calloc(_copy_text_length, sizeof(char));
-    temp = strpbrk(_copy_text, delimiter);
+    temp = strpbrk(_copy_text_for_split, delimiter);
 
     if (temp != NULL) {
+
         size_t temp_len = strlen(temp);
 
         length_token = _copy_text_length - temp_len;
 
-        // token = calloc(length_token, sizeof(char));
+        token = calloc(length_token, sizeof(char));
 
-        strncpy(token, _copy_text, length_token);
+        strncpy(token, _copy_text_for_split, length_token);
 
-        _copy_text = _copy_text + length_token + len_delimiter;
+        _copy_text_for_split = _copy_text_for_split + length_token + len_delimiter;
+
     } else {
-        strcpy(token, _copy_text);
-        _copy_text = NULL;
+
+        token = calloc(strlen(_copy_text_for_split), sizeof(char));
+        strcpy(token, _copy_text_for_split);
+        _copy_text_for_split = NULL;
+
     }
 
     return token;
@@ -125,8 +143,7 @@ toLowerCase(char *str) {
 int
 toTitleCase(char *str) {
     int i = 0;
-    bool
-    is_new_word = true;
+    bool is_new_word = true;
 
     while (str[i]) {
         if (is_new_word == true) {
@@ -192,76 +209,38 @@ toCamelCase(char *str) {
 }
 
 
-// Need rewrite for change object in-place
-/*
-    Parse a text and return pointer to a ListStringsWithLength words and count it
- */
-// ListStringsWithLength *
-// getWords(char *text) {
+static char *_copy_text_for_words;
+char *
+getWords(char *text) {
 
-//     // a variable for count words
-//     int count = 0;
+    if (text != NULL) {
+        _copy_text_for_words = calloc(strlen(text), sizeof(char));
+        strcpy(_copy_text_for_words, text);
+    }
 
-//     // keep length of the text
-//     size_t text_len = strlen(text);
+    char *word;
 
-//     // a flag indicating the a beginning of a word
-//     bool
-//     new_word = false;
+    if (word == NULL) {
 
-//     // an index of a start found a word
-//     int index_start_word = 0;
+    }
 
-//     // 2D-array for found word
-//     // it will be same memory size as the original text
-//     char **words = malloc(text_len * sizeof(char));
+    word = strtok(text, " ");
 
-//     for (int i = 0; i <= text_len; ++i) {
+    if (ispunct(word[0]) || isspace(word[0])) {
+        return getWords(NULL);
+    }
 
-//         // if found ascii letter or digits and new no traced early
-//         // keep index of beginning a new word
-//         // and change the flag
-//         if (isalnum(text[i]) != 0) {
-//             if (new_word == false) {
-//                 new_word = true;
-//                 index_start_word = i;
-//             }
-
-//         // if it is not ascii letter or digits and a word traced early
-//         // it means the word ended
-//         } else {
-//             if (new_word == true) {
-
-//                 // allocate a memory for a new word in the array of words
-//                 words[count] = malloc(i - index_start_word * sizeof(char) + 1);
-
-//                 // copy the found word from the text by indexes
-//                 strncpy(words[count], text + index_start_word, i - index_start_word);
-
-//                 // change the flag
-//                 new_word = false;
-
-//                 // increase the counter of words
-//                 count++;
-//             }
-//         };
-//     }
-
-//     // bind the found words and it count to a structure and return it
-//     ListStringsWithLength *list_with_length = malloc(sizeof(ListStringsWithLength));
-
-//     list_with_length->length = count;
-//     list_with_length->list = words;
-
-//     return list_with_length;
-// }
+    return word;
+}
 
 
-// unsigned int
-// getCountWords(char *str) {
-//     ListStringsWithLength *list_with_length = getWords(str);
-//     return list_with_length->length;
-// }
+unsigned int
+getCountWords(char *str) {
+
+    // char *token = strtok(str, " ");
+
+    return 1;
+}
 
 
 int
