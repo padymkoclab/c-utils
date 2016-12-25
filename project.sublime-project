@@ -1,8 +1,17 @@
 {
-	"folders":
-	[
-		{
-			"path": "."
-		}
-	]
+    "folders":
+    [
+        {
+            "path": "."
+        },
+        {
+            "path": "../../../Private/",
+            "file_include_patterns": [
+                "A"
+            ],
+            "folder_exclude_patterns": [
+                "*"
+            ]
+        }
+    ]
 }

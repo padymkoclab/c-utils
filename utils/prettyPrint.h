@@ -5,6 +5,11 @@
 #include <stdio.h>
 
 
+void putd(int value) {
+    printf("%d\n", value);
+}
+
+
 void printIntArray(int array[], size_t length, char *ending_charapter) {
     for (int i = 0; i < length; ++i) {
         printf("%d%s", array[i], ending_charapter);
