@@ -8,26 +8,36 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+
 #ifndef __STRING_H__
-#define __STRING_H__
+    #define __STRING_H__
 
 #ifndef DIGITS
-#define DIGITS "0123456789"
+    #define DIGITS "0123456789"
 #endif
 
 #ifndef ASCII_LOWERCASE
-#define ASCII_LOWERCASE "abcdefghijklmnopqrstuvwxyz\0"
+    #define ASCII_LOWERCASE "abcdefghijklmnopqrstuvwxyz\0"
 #endif
 
 
 #ifndef ASCII_UPPERCASE
-#define ASCII_UPPERCASE "ABCDEFGHIJKLMNOPQRSTUVWXYZ\0"
+    #define ASCII_UPPERCASE "ABCDEFGHIJKLMNOPQRSTUVWXYZ\0"
 #endif
 
 
 #ifndef ASCII_LETTERS
-#define ASCII_LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    #define ASCII_LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 #endif
+
+#ifndef ESCAPED_CHARS
+    #define ESCAPED_CHARS "\a\b\f\n\r\t\v\\\?\'\"\0"
+#endif
+
+
+typedef struct _CounterWords {
+
+} CounterWords;
 
 
 int
@@ -206,40 +216,6 @@ toCamelCase(char *str) {
         ++i;
     }
     return 0;
-}
-
-
-static char *_copy_text_for_words;
-char *
-getWords(char *text) {
-
-    if (text != NULL) {
-        _copy_text_for_words = calloc(strlen(text), sizeof(char));
-        strcpy(_copy_text_for_words, text);
-    }
-
-    char *word;
-
-    if (word == NULL) {
-
-    }
-
-    word = strtok(text, " ");
-
-    if (ispunct(word[0]) || isspace(word[0])) {
-        return getWords(NULL);
-    }
-
-    return word;
-}
-
-
-unsigned int
-getCountWords(char *str) {
-
-    // char *token = strtok(str, " ");
-
-    return 1;
 }
 
 
@@ -424,5 +400,226 @@ stripString(char *str, char *substr, char action) {
 
     return 0;
 }
+
+
+int replaceSubstr(char *str, char *substr_from, char *substr_to) {
+
+    size_t str_len = strlen(str);
+    size_t substr_from_len = strlen(substr_from);
+    size_t substr_to_len = strlen(substr_to);
+
+    if (substr_from_len > str_len) return 0;
+
+    unsigned int countSubstr = getCountSubstrOfString(str, substr_from);
+
+    if (countSubstr == 0) return 0;
+
+    size_t new_len_str = str_len - (countSubstr * substr_from_len) + (countSubstr * substr_to_len);
+
+    char *buffer;
+    buffer = calloc(new_len_str, sizeof(char));
+
+    int i = 0;
+    int start_index_shift;
+    char *shift;
+    shift = calloc(new_len_str, sizeof(char));
+
+    while((shift = strstr(str, substr_from)) != NULL) {
+        start_index_shift = strlen(str) - strlen(shift);
+        strncat(buffer, str, start_index_shift);
+        strcat(buffer, substr_to);
+        str = str + start_index_shift + substr_from_len;
+        ++i;
+    };
+
+    strcat(buffer, str);
+    str = str - str_len + strlen(str);
+
+    // str = realloc(str, strlen(buffer) * sizeof(buffer) + 10000);
+    strcpy(str, buffer);
+
+    free(shift);
+    free(buffer);
+
+    return 0;
+}
+
+
+int escapeString(char *str) {
+
+    const size_t str_len = strlen(str);
+
+    char *buffer;
+    buffer = malloc(2 * str_len * sizeof(char) + 1);
+
+    int i = 0;
+
+    char escapedChr[3];
+
+    while (i < str_len) {
+        if (strchr(ESCAPED_CHARS, str[i]) != 0) {
+            switch (str[i]) {
+                case '\a':
+                    strcpy(escapedChr, "\\a");
+                    break;
+                case '\b':
+                    strcpy(escapedChr, "\\b");
+                    break;
+                case '\f':
+                    strcpy(escapedChr, "\\f");
+                    break;
+                case '\n':
+                    strcpy(escapedChr, "\\n");
+                    break;
+                case '\t':
+                    strcpy(escapedChr, "\\t");
+                    break;
+                case '\r':
+                    strcpy(escapedChr, "\\r");
+                    break;
+                case '\v':
+                    strcpy(escapedChr, "\\v");
+                    break;
+                case '\"':
+                    strcpy(escapedChr, "\"");
+                    break;
+                case '\'':
+                    strcpy(escapedChr, "\'");
+                    break;
+                case '\\':
+                    strcpy(escapedChr, "\\");
+                    break;
+                default:
+                    strcpy(escapedChr, "");
+                    break;
+            }
+            strcat(buffer, escapedChr);
+        } else {
+            strncat(buffer, &str[i], 1);
+        }
+        ++i;
+    }
+
+    str = realloc(str, sizeof(char) * strlen(buffer));
+    strcpy(str, buffer);
+
+    free(buffer);
+
+    return 0;
+}
+
+
+/**
+ * Not implemented
+ */
+int unEscapeString(char *str) {
+
+    return -1;
+
+    const size_t str_len = strlen(str);
+
+    char *buffer;
+    buffer = malloc(str_len * sizeof(char) + 1000);
+
+    int i = 0;
+
+    char escapedChr[3];
+
+    while (i < str_len) {
+        if (strchr(ESCAPED_CHARS, str[i]) != 0) {
+            switch (str[i]) {
+                case '\a':
+                    strcpy(escapedChr, "\\a");
+                    break;
+                case '\b':
+                    strcpy(escapedChr, "\\b");
+                    break;
+                case '\f':
+                    strcpy(escapedChr, "\\f");
+                    break;
+                case '\n':
+                    strcpy(escapedChr, "\\n");
+                    break;
+                case '\t':
+                    strcpy(escapedChr, "\\t");
+                    break;
+                case '\r':
+                    strcpy(escapedChr, "\\r");
+                    break;
+                case '\v':
+                    strcpy(escapedChr, "\\v");
+                    break;
+                case '\"':
+                    strcpy(escapedChr, "\"");
+                    break;
+                case '\'':
+                    strcpy(escapedChr, "\'");
+                    break;
+                case '\\':
+                    strcpy(escapedChr, "\\");
+                    break;
+                default:
+                    strcpy(escapedChr, "");
+                    break;
+            }
+            strcat(buffer, escapedChr);
+        } else {
+            strncat(buffer, &str[i], 1);
+        }
+        ++i;
+    }
+
+    str = realloc(str, sizeof(char) * strlen(buffer));
+    strcpy(str, buffer);
+
+    free(buffer);
+
+    return 0;
+}
+
+
+static char *_copy_text_for_words;
+char *
+getWords(char *text) {
+
+    char *word;
+
+    if (text != NULL) {
+        _copy_text_for_words = calloc(strlen(text), sizeof(char));
+        strcpy(_copy_text_for_words, text);
+        word = splitString(text, " ");
+    }
+
+    word = splitString(NULL, " ");
+
+    if (word != NULL) {
+        stripString(word, ",.:();!?", 'b');
+    }
+
+    return word;
+}
+
+
+unsigned int
+getCountWords(char *str) {
+
+    char *word = getWords(str);
+
+    unsigned int count = 0;
+    while (word != NULL) {
+        word = getWords(NULL);
+        ++count;
+    }
+
+    return count;
+}
+
+
+int
+counterWords(CounterWords *counter_words, char *text) {
+    // need fill dictionary
+    return 0;
+}
+
 
 #endif // __STRING_H__

@@ -12,7 +12,8 @@
 #include "./array.h"
 
 
-unsigned long int factorial(const long int n) {
+unsigned long int
+factorial(const long int n) {
     if (n == 1) {
         return n;
     }
@@ -20,14 +21,16 @@ unsigned long int factorial(const long int n) {
 }
 
 
-static unsigned long int get_value_sequence_fibonacci(const unsigned int index) {
+static unsigned long int
+get_value_sequence_fibonacci(const unsigned int index) {
     if (index == 0 || index == 1) {
         return index;
     }
     return get_value_sequence_fibonacci(index - 1) + get_value_sequence_fibonacci(index - 2);
 }
 
-bool fibonacci(unsigned long int* array, const int length) {
+bool
+fibonacci(unsigned long int* array, const int length) {
     for (int i = 0; i < length; ++i) {
         array[i] = get_value_sequence_fibonacci(i);
     }
@@ -35,7 +38,8 @@ bool fibonacci(unsigned long int* array, const int length) {
 }
 
 
-bool isArmstrongNumber(const unsigned int number) {
+bool
+isArmstrongNumber(const unsigned int number) {
     size_t len = getLengthIntNumber(number);
     char *buffer;
     buffer = malloc(len * sizeof(char) + 1);
