@@ -35,6 +35,9 @@
 #endif
 
 
+
+
+
 typedef struct _CounterWords {
 
 } CounterWords;
@@ -54,78 +57,6 @@ getCharactersByCodesRange(char *buffer, const unsigned int start_code, const uns
     }
     return 0;
 }
-
-/**
- * char str[] = "Following is the declaratison for strncmp() functin";
-
-    char *token;
-    token = splitString(str, " ");
-
-    while (token != NULL) {
-        puts(token);
-        token = splitString(NULL, " ");
-    }
- */
-static char *_copy_text_for_split;
-char *
-splitString(char *text, char *delimiter) {
-
-    if (strcmp(delimiter, "") == 0) return NULL;
-
-    size_t len_delimiter = strlen(delimiter);
-    char *token;
-    size_t length_token;
-
-    if (text != NULL) {
-
-        _copy_text_for_split = calloc(strlen(text), sizeof(char));
-        strcpy(_copy_text_for_split, text);
-
-        _copy_text_for_split = strpbrk(_copy_text_for_split, delimiter);
-
-        if (_copy_text_for_split == NULL) return text;
-
-        length_token = strlen(text) - strlen(_copy_text_for_split);
-
-        token = calloc(length_token, sizeof(char));
-
-        strncpy(token, text, length_token);
-
-        _copy_text_for_split += len_delimiter;
-
-        return token;
-
-    }
-
-    if (_copy_text_for_split == NULL) return NULL;
-
-    size_t _copy_text_length = strlen(_copy_text_for_split);
-    char *temp;
-    temp = calloc(_copy_text_length, sizeof(char));
-    temp = strpbrk(_copy_text_for_split, delimiter);
-
-    if (temp != NULL) {
-
-        size_t temp_len = strlen(temp);
-
-        length_token = _copy_text_length - temp_len;
-
-        token = calloc(length_token, sizeof(char));
-
-        strncpy(token, _copy_text_for_split, length_token);
-
-        _copy_text_for_split = _copy_text_for_split + length_token + len_delimiter;
-
-    } else {
-
-        token = calloc(strlen(_copy_text_for_split), sizeof(char));
-        strcpy(token, _copy_text_for_split);
-        _copy_text_for_split = NULL;
-
-    }
-
-    return token;
-};
 
 
 int
@@ -308,6 +239,69 @@ sliceString(char *str, const unsigned int slice_from, const unsigned int slice_t
 
     return 0;
 }
+
+
+static char *_copy_text_for_split;
+char *
+splitString(char *text, char *delimiter) {
+
+    if (strcmp(delimiter, "") == 0) return NULL;
+
+    size_t len_delimiter = strlen(delimiter);
+    char *token;
+    size_t length_token;
+
+    if (text != NULL) {
+
+        _copy_text_for_split = calloc(strlen(text), sizeof(char));
+        strcpy(_copy_text_for_split, text);
+
+        _copy_text_for_split = strpbrk(_copy_text_for_split, delimiter);
+
+        if (_copy_text_for_split == NULL) return text;
+
+        length_token = strlen(text) - strlen(_copy_text_for_split);
+
+        token = calloc(length_token, sizeof(char));
+
+        strncpy(token, text, length_token);
+
+        _copy_text_for_split += len_delimiter;
+
+        return token;
+
+    }
+
+    if (_copy_text_for_split == NULL) return NULL;
+
+    size_t _copy_text_length = strlen(_copy_text_for_split);
+    char *temp;
+    temp = calloc(_copy_text_length, sizeof(char));
+    temp = strpbrk(_copy_text_for_split, delimiter);
+
+
+    if (temp != NULL) {
+
+        size_t temp_len = strlen(temp);
+
+        length_token = _copy_text_length - temp_len;
+
+        token = calloc(length_token, sizeof(char));
+
+        strncpy(token, _copy_text_for_split, length_token);
+
+        _copy_text_for_split = _copy_text_for_split + length_token + len_delimiter;
+
+    } else {
+
+        token = calloc(strlen(_copy_text_for_split), sizeof(char));
+        strcpy(token, _copy_text_for_split);
+        _copy_text_for_split = NULL;
+
+    }
+
+    return token;
+};
 
 
 unsigned int
