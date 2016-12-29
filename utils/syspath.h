@@ -21,12 +21,23 @@ extern int errno;
 typedef struct _SysPath {
     char *path;
     size_t length;
-    unsigned int is_absolute: 1;
+    unsigned int isAbsolute: 1;
     char *parent;
     char *extension;
     char *name;
     char *fullname;
+
     int (*listdir) (struct _SysPath *obj, char **array);
+    int (*size) (struct _SysPath *obj);
+    int (*mkdir) (struct _SysPath *obj);
+    int (*writeFile) (struct _SysPath *obj, char *content, char method);
+    int (*readFile) (struct _SysPath *obj, char *content);
+    int (*move) (struct _SysPath *obj, char location);
+    int (*copy) (struct _SysPath *obj, char *location);
+    int (*remove) (struct _SysPath *obj);
+
+    void (*print) (struct _SysPath *obj);
+
     bool (*exists) (struct _SysPath *obj);
     bool (*isFile) (struct _SysPath *obj);
     bool (*isDir) (struct _SysPath *obj);
@@ -48,7 +59,7 @@ validatePath(char *path) {
 
 
 static bool
-_is_absolute(char *path) {
+isAbsolute(char *path) {
     if (path[0] == '/') {
         return true;
     }
@@ -140,33 +151,33 @@ splitPathToParts(char *path) {
 }
 
 
-void printPathInfo(SysPath *obj){
+static void
+printPath(SysPath *obj) {
     printf("Path: %s\n", obj->path);
     printf("Length: %li\n", obj->length);
-    printf("Is absolute: %d\n", obj->is_absolute);
+    printf("Is absolute: %d\n", obj->isAbsolute);
     printf("Parent: %s\n", obj->parent);
     printf("Extension: %s\n", obj->extension);
     printf("Name: %s\n", obj->name);
     printf("Fullname: %s\n", obj->fullname);
     printf("Exists: %d\n", obj->exists(obj));
-    printf("Exists: %d\n", obj->isDir(obj));
-    printf("Exists: %d\n", obj->isFile(obj));
-    printf("Exists: %d\n", obj->isSymlink(obj));
-    printf("Exists: %d\n", obj->isBlock(obj));
-    printf("Exists: %d\n", obj->isFIFO(obj));
-    printf("Exists: %d\n", obj->isSocket(obj));
+    printf("isDir: %d\n", obj->isDir(obj));
+    printf("isFile: %d\n", obj->isFile(obj));
+    printf("isSymlink: %d\n", obj->isSymlink(obj));
+    printf("isBlock: %d\n", obj->isBlock(obj));
+    printf("isFIFO: %d\n", obj->isFIFO(obj));
+    printf("isSocket: %d\n", obj->isSocket(obj));
 }
 
 
-bool
+static bool
 exists(SysPath *obj) {
     struct stat objStat;
-    stat(obj->path, &objStat);
-    return objStat.st_mode == 0 ? false: true;
+    return stat(obj->path, &objStat) == 0 ? true: false;
 };
 
 
-bool
+static bool
 isDir(SysPath *obj) {
     struct stat objStat;
     stat(obj->path, &objStat);
@@ -174,7 +185,7 @@ isDir(SysPath *obj) {
 };
 
 
-bool
+static bool
 isFile(SysPath *obj) {
     struct stat objStat;
     stat(obj->path, &objStat);
@@ -182,7 +193,7 @@ isFile(SysPath *obj) {
 };
 
 
-bool
+static bool
 isSymlink(SysPath *obj) {
     struct stat objStat;
     stat(obj->path, &objStat);
@@ -190,7 +201,7 @@ isSymlink(SysPath *obj) {
 };
 
 
-bool
+static bool
 isBlock(SysPath *obj) {
     struct stat objStat;
     stat(obj->path, &objStat);
@@ -198,7 +209,7 @@ isBlock(SysPath *obj) {
 };
 
 
-bool
+static bool
 isFIFO(SysPath *obj) {
     struct stat objStat;
     stat(obj->path, &objStat);
@@ -206,7 +217,7 @@ isFIFO(SysPath *obj) {
 };
 
 
-bool
+static bool
 isSocket(SysPath *obj) {
     struct stat objStat;
     stat(obj->path, &objStat);
@@ -217,22 +228,140 @@ isSocket(SysPath *obj) {
 };
 
 
-void rmTree();
-void size();
-void mkdirThis();
-void writeFile();
-void readFile();
-void move();
-void copy();
-void parents();
-void child();
-void expand();
-void expandUser();
-void expandVars();
-void split();
-void relativeTo();
+static char *
+getExtension(SysPath *obj) {
 
-int
+    char *token = strchr(obj->fullname, '.');
+
+    if (token == NULL) return NULL;
+
+    char *extension = calloc(strlen(token), sizeof(char));
+    strcpy(extension, token);
+
+    if (extension != NULL){
+        char *shift = NULL;
+        if (strcmp(extension, ".") == 0) {
+            extension = NULL;
+        }
+        while (extension != NULL) {
+            shift = strchr(extension + 1, '.');
+            if (shift == NULL) {
+                if (extension[0] == '.') memmove(extension, extension + 1, strlen(extension));
+                break;
+            } else {
+                strcpy(extension, shift + 1);
+            }
+        }
+    }
+
+    return extension;
+}
+
+
+static int
+size(SysPath *obj) {
+    struct stat st;
+    if (stat(obj->path, &st) == 0) {
+        return st.st_size;
+    }
+    return -1;
+}
+
+
+static int
+mkdir_(SysPath *obj) {
+
+    return 0;
+}
+
+
+static int
+writeFile(SysPath *obj, char *content, char method) {
+
+    if (method == 'w' || method == 'a') {
+
+        FILE *file;
+
+        char method_[2];
+        method_[0] = method;
+        method_[1] = '\0';
+
+        file = fopen(obj->path, method_);
+
+        for (int i = 0; i < strlen(content); ++i) {
+            fputc(content[i], file);
+        }
+
+        fclose(file);
+
+        return 0;
+    }
+
+    return -1;
+}
+
+
+static int
+readFile(SysPath *obj, char *content) {
+
+    if (obj->isFile(obj) == false) return -1;
+
+    FILE *file;
+
+    file = fopen(obj->path, "r");
+    char chr;
+
+    int i;
+    for (i = 0; (chr = fgetc(file)) != EOF; ++i) {
+        content[i] = chr;
+    }
+
+    fclose(file);
+
+    return 0;
+}
+
+
+static int
+move(SysPath *obj, char location) {
+
+    return 0;
+}
+
+
+static int
+copy(SysPath *obj, char *location) {
+
+    if (obj->isFile(obj) == true) {
+        FILE *file_source, *file_copy;
+
+        file_source = fopen(obj->path, "r");
+        file_copy = fopen(location, "w");
+
+        char chr;
+        while ((chr = fgetc(file_source)) != EOF) {
+            fputc(chr, file_copy);
+        }
+
+        fclose(file_source);
+        fclose(file_copy);
+
+        return 0;
+    } else if (obj->isDir(obj) == true) {
+        return 0;
+    }
+
+    return -1;
+}
+
+
+static int
+remove_(SysPath *obj) {
+    return remove(obj->path);
+}
+
+
+static int
 listdir(SysPath *obj, char **array) {
 
     if (obj->isDir(obj) == false) return -1;
@@ -242,7 +371,6 @@ listdir(SysPath *obj, char **array) {
 
     if (dir == NULL) return -2;
 
-    array = malloc(20 * sizeof(char));
     unsigned int count_entries = 0;
 
     struct dirent *entry;
@@ -250,9 +378,8 @@ listdir(SysPath *obj, char **array) {
 
         if (strcmp(entry->d_name, ".")) {
             if (strcmp(entry->d_name, "..")) {
-                // putd(count_entries);
                 array[count_entries] = malloc(strlen(entry->d_name) * sizeof(char) + 1);
-                // strcpy(array[count_entries], entry->d_name);
+                strcpy(array[count_entries], entry->d_name);
                 count_entries++;
             }
         }
@@ -264,21 +391,31 @@ listdir(SysPath *obj, char **array) {
 }
 
 
-char *
-walk(SysPath *obj) {
-    return "";
-}
-
-
-int
-destroy(SysPath *obj) {
-    return 0;
-};
+void parents();
+void walk();
+void child();
+void expand();
+void expandUser();
+void expandVars();
+void split();
+void relativeTo();
+void resolve();
+void destroySysPath();
 
 
 static void
 bindMethodsToNewSysPath(SysPath *obj) {
+
+    obj->size = &size;
+    obj->print = &printPath;
+    obj->mkdir = &mkdir_;
+    obj->writeFile = &writeFile;
+    obj->readFile = &readFile;
+    obj->copy = &copy;
+    obj->move = &move;
     obj->listdir = &listdir;
+    obj->remove = &remove_;
+
     obj->exists = &exists;
     obj->isDir = &isDir;
     obj->isFile = &isFile;
@@ -307,8 +444,8 @@ NewSysPath(char *path) {
     obj->path = (char*)malloc(len * sizeof(char));
     obj->path = path;
 
-    // set is_absolute
-    obj->is_absolute = _is_absolute(path);
+    // set isAbsolute
+    obj->isAbsolute = isAbsolute(path);
 
     // split path by slash on parts
 
@@ -338,43 +475,20 @@ NewSysPath(char *path) {
     obj->fullname = malloc(strlen(parts_path[count - 1]) * sizeof(char));
     strcpy(obj->fullname, parts_path[count - 1]);
 
-    // if (startSwithString(obj->fullname, ".")) {
+    // set extension and name
+    char *extension = getExtension(obj);
 
-    //     ListStringsWithLength *parts_fullname = splitStringToListString(obj->fullname, ".");
+    if (extension == NULL) {
+        obj->extension = NULL;
+    } else {
 
-    //     // set extension, if presents
-    //     if (parts_fullname->length > 1) {
-    //         obj->extension = malloc(strlen(parts_fullname->list[parts_fullname->length - 1]) * sizeof(char));
-    //         obj->extension = parts_fullname->list[parts_fullname->length - 1];
-    //     } else {
+        obj->extension = calloc(strlen(extension), sizeof(char));
+        strcpy(obj->extension, extension);
 
-    //         obj->extension = malloc(sizeof(char));
-    //         obj->extension = "";
-    //     }
-
-    //     // set name
-    //     obj->name = malloc(strlen(parts_fullname->list[0]) * sizeof(char) + 1);
-    //     strcpy(obj->name, ".");
-    //     strcat(obj->name, parts_fullname->list[0]);
-
-    // } else {
-
-    //     ListStringsWithLength *parts_fullname = splitStringToListString(obj->fullname, ".");
-
-    //     // set extension, if presents
-    //     if (parts_fullname->length > 1) {
-    //         obj->extension = malloc(strlen(parts_fullname->list[parts_fullname->length - 1]) * sizeof(char));
-    //         obj->extension = parts_fullname->list[parts_fullname->length - 1];
-    //     } else {
-
-    //         obj->extension = malloc(sizeof(char));
-    //         obj->extension = "";
-    //     }
-
-    //     // set name
-    //     obj->name = calloc(strlen(parts_fullname->list[0]), sizeof(char));
-    //     obj->name = parts_fullname->list[0];
-    // }
+        size_t name_len = strlen(obj->fullname) - strlen(obj->extension);
+        obj->name = calloc(name_len, sizeof(char));
+        strncpy(obj->name, obj->fullname, name_len - 1);
+    }
 
     bindMethodsToNewSysPath(obj);
 

@@ -1,17 +1,28 @@
 {
-    "folders":
-    [
-        {
-            "path": "."
-        },
-        {
-            "path": "../../../Private/",
-            "file_include_patterns": [
-                "A"
-            ],
-            "folder_exclude_patterns": [
-                "*"
-            ]
-        }
-    ]
+	"build_systems":
+	[
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "\"python3\" -u \"$file\""
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		},
+		{
+			"file_include_patterns":
+			[
+				"A"
+			],
+			"folder_exclude_patterns":
+			[
+				"*"
+			],
+			"path": "../../../Private/"
+		}
+	]
 }
