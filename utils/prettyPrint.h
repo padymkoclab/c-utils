@@ -1,8 +1,11 @@
 
-#ifndef __PRETTY_PRINT__
-#define __PRETTY_PRINT__
+#ifndef __PRETTY_PRINT_H__
+#define __PRETTY_PRINT_H__
 
 #include <stdio.h>
+#include <time.h>
+
+#include <sys/stat.h>
 
 
 void putd(int value) {
@@ -39,4 +42,4 @@ void printStatStruct(char *path, struct stat path_stat) {
 }
 
 
-#endif // __PRETTY_PRINT__
+#endif // __PRETTY_PRINT_H__
