@@ -3,8 +3,8 @@
  */
 
 
-#ifndef __MATH_HASS__
-#define __MATH_HASS__
+#ifndef __MATH_H__
+#define __MATH_H__
 
 #include <math.h>
 
@@ -12,10 +12,12 @@
 #include "./array.h"
 
 
-unsigned long int
+static unsigned long int
 factorial(const long int n) {
-    if (n == 1) {
-        return n;
+    if (n == 1 || n == 0) {
+        return 1;
+    } else if (n < 0) {
+        return -1;
     }
     return n * factorial(n - 1);
 }
@@ -29,8 +31,9 @@ get_value_sequence_fibonacci(const unsigned int index) {
     return get_value_sequence_fibonacci(index - 1) + get_value_sequence_fibonacci(index - 2);
 }
 
-bool
-fibonacci(unsigned long int* array, const int length) {
+static int
+fibonacci(unsigned long int *array, const int length) {
+    if (length < 1) return -1;
     for (int i = 0; i < length; ++i) {
         array[i] = get_value_sequence_fibonacci(i);
     }
@@ -38,7 +41,7 @@ fibonacci(unsigned long int* array, const int length) {
 }
 
 
-bool
+static bool
 isArmstrongNumber(const unsigned int number) {
     size_t len = getLengthIntNumber(number);
     char *buffer;
@@ -46,7 +49,7 @@ isArmstrongNumber(const unsigned int number) {
 
     sprintf(buffer, "%d", number);
 
-    unsigned long int sum = 0;
+    unsigned long int sum = 0, cube;
 
     for (int i = 0; i < len; ++i) {
         cube = (buffer[i] - '0') * (buffer[i] - '0') * (buffer[i] - '0');
@@ -59,4 +62,4 @@ isArmstrongNumber(const unsigned int number) {
 }
 
 
-#endif // __MATH_HASS__
+#endif // __MATH_H__

@@ -6,6 +6,9 @@
 #define __ARRAY_H__
 
 
+#include <stdbool.h>
+
+
 int sumIntArray(int array[], int length) {
     int sum = 0;
     for (int i = 0; i < length; ++i) {
