@@ -6,38 +6,6 @@
 // https://www.tutorialspoint.com/data_structures_algorithms/linked_list_program_in_c.htm
 // http://www.thegeekstuff.com/2012/08/c-linked-list-example/
 
-
-
-// linkedlist_node_t *LinkedList = NewLinkedList(457);
-// printLinkedList(LinkedList);
-// printf("Length: %li\n", getLengthLinkedList(LinkedList));
-// appendToLinkedList(LinkedList, 78);
-// appendToLinkedList(LinkedList, 712);
-// appendToLinkedList(LinkedList, -78);
-// prependToLinkedList(&LinkedList, -100);
-// printLinkedList(LinkedList);
-// printf("Length: %li\n", getLengthLinkedList(LinkedList));
-// popFromBeginLinkedList(&LinkedList);
-// popFromBeginLinkedList(&LinkedList);
-// printLinkedList(LinkedList);
-// printf("Length: %li\n", getLengthLinkedList(LinkedList));
-// popFromEndLinkedList(LinkedList);
-// printf("Length: %li\n", getLengthLinkedList(LinkedList));
-// printf("Is empty: %li\n", isEmptyLinkedList(LinkedList));
-// printLinkedList(LinkedList);
-// popFromEndLinkedList(LinkedList);
-// printf("Length: %li\n", getLengthLinkedList(LinkedList));
-// printf("Is empty: %li\n", isEmptyLinkedList(LinkedList));
-// printLinkedList(LinkedList);
-// prependToLinkedList(&LinkedList, -100);
-// prependToLinkedList(&LinkedList, -100);
-// prependToLinkedList(&LinkedList, -100);
-// prependToLinkedList(&LinkedList, -100);
-// printf("Length: %li\n", getLengthLinkedList(LinkedList));
-// printLinkedList(LinkedList);
-// // DestroyLinkedList(LinkedList);
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -48,7 +16,7 @@ typedef struct _LinkedListNode {
 } linkedlist_node_t;
 
 
-linkedlist_node_t *
+static linkedlist_node_t *
 NewLinkedList(int cargo) {
     linkedlist_node_t *LinkedListHead = NULL;
     LinkedListHead = malloc(sizeof(linkedlist_node_t));
@@ -58,10 +26,10 @@ NewLinkedList(int cargo) {
 }
 
 
-size_t
+static size_t
 getLengthLinkedList(linkedlist_node_t *LinkedListHead) {
 
-    if (LinkedListHead->next == NULL) return 0;
+    if (LinkedListHead->next == NULL) return 1;
 
     linkedlist_node_t *current_node = LinkedListHead;
 
@@ -74,7 +42,7 @@ getLengthLinkedList(linkedlist_node_t *LinkedListHead) {
 }
 
 
-void
+static void
 printLinkedList(linkedlist_node_t *LinkedListHead) {
     printf("[");
     if (LinkedListHead->next != NULL) {
@@ -84,12 +52,14 @@ printLinkedList(linkedlist_node_t *LinkedListHead) {
             if (current_node->next != NULL) printf(", ");
             current_node = current_node->next;
         }
+    } else {
+        printf("%d", LinkedListHead->cargo);
     }
     printf("]\n");
 }
 
 
-int
+static int
 appendToLinkedList(linkedlist_node_t *LinkedListHead, int cargo) {
     linkedlist_node_t *current_node = LinkedListHead;
     while (current_node->next != NULL) {
@@ -102,7 +72,7 @@ appendToLinkedList(linkedlist_node_t *LinkedListHead, int cargo) {
 }
 
 
-int
+static int
 prependToLinkedList(linkedlist_node_t **LinkedListHead, int cargo) {
     linkedlist_node_t *new_node;
     new_node = (linkedlist_node_t*)malloc(sizeof(linkedlist_node_t));
@@ -113,7 +83,7 @@ prependToLinkedList(linkedlist_node_t **LinkedListHead, int cargo) {
 }
 
 
-int
+static int
 popFromEndLinkedList(linkedlist_node_t *LinkedListHead) {
     int value;
     if (LinkedListHead->next == NULL) {
