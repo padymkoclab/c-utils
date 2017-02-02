@@ -1,34 +1,112 @@
 /**
- * Generation fake data for the C programing language
+ * Functions for working with colors
  */
 
 #ifndef __COLORS_H__
 #define __COLORS_H__
 
 
+// a type for a struct of RGB color
 typedef struct _ColorRGB {
     unsigned short int red;
     unsigned short int green;
     unsigned short int blue;
-    void (*toString)(struct _ColorRGB);
 } colorRGB_t;
 
 
 /*
-    Convert color value from hex format to RGB
+    Convert a color`s value from the hex format to the RGB.
+    Return -1 if a passed value in the hex format is not correct, otherwise - return 0;
  */
 static int
-_ColorHexToRGB(const char value[], colorRGB_t *colorRGB) {
+convertColorHexToRGB(const char originValue[], colorRGB_t *colorRGB) {
+
+    // a full value of color in hex format must constains 6 charapters
+    char completedValue[6];
+    size_t lenOriginValue;
+    size_t lenCompletedValue;
+
+    // an intermediary variable for keeping value in the hex format
+    char hexSingleValue[3];
+
+    // a temp pointer to char, need only to the strtol()
+    char *ptr;
+
+    // a variable for keeping a converted number in the hex to the decimal format
+    long int number;
+
+    // validation input
+    lenOriginValue = strlen(originValue);
+    if (lenOriginValue > 7 || lenOriginValue < 3) return -1;
+
+    // copy value without sign '#', if found as first in the string
+    (originValue[0] == '#') ? strcpy(completedValue, originValue + 1) : strcpy(completedValue, originValue);
+
+    lenCompletedValue = strlen(completedValue);
+
+    // if the value has only 3 charapters, dublicate an each after itself
+    // but if not full version of the hex name of a color (6 charapters), return -1
+    if (lenCompletedValue == 3) {
+        completedValue[5] = completedValue[2];
+        completedValue[4] = completedValue[2];
+        completedValue[3] = completedValue[1];
+        completedValue[2] = completedValue[1];
+        completedValue[1] = completedValue[0];
+    } else if (lenCompletedValue != 6) return -1;
+
+    // convert string, by parts, to decimal values and keep it in a struct
+
+    sprintf(hexSingleValue, "%c%c", completedValue[0], completedValue[1]);
+    number = strtol(hexSingleValue, &ptr, 16);
+    colorRGB->red = number;
+
+    sprintf(hexSingleValue, "%c%c", completedValue[2], completedValue[3]);
+    number = strtol(hexSingleValue, &ptr, 16);
+    colorRGB->green = number;
+
+    sprintf(hexSingleValue, "%c%c", completedValue[4], completedValue[5]);
+    number = strtol(hexSingleValue, &ptr, 16);
+    colorRGB->blue = number;
+
     return 0;
 }
 
 
 /*
-    Convert a color`s value from RGB format to hex
+    Convert a color`s value from the RGB format to the hex
  */
 static int
-_ColorRGBToHex(const colorRGB_t *colorRGB, char value[7]) {
+convertColorRGBToHex(const colorRGB_t *colorRGB, char value[8]) {
+    sprintf(value, "#%02X%02X%02X", colorRGB->red, colorRGB->green, colorRGB->blue);
     return 0;
+}
+
+
+/*
+    Forming a string representation data in an instance of the structure colorRGB_t
+ */
+static int
+getRGBasString(const colorRGB_t *colorRGB, char str[18]) {
+    sprintf(str, "rgb(%d, %d, %d)", colorRGB->red, colorRGB->green, colorRGB->blue);
+    return 0;
+}
+
+
+/*
+    Convert a color`s name (if exists) to RGB
+ */
+static char *
+convertNameColorToRGB(const char value[], const colorRGB_t *colorRGB) {
+    return NULL;
+}
+
+
+/*
+    Convert a color`s name (if exists) to Hex
+ */
+static int
+convertNameColorToHex(const char colorname[], const char value[7]) {
+    return NULL;
 }
 
 
@@ -36,7 +114,7 @@ _ColorRGBToHex(const colorRGB_t *colorRGB, char value[7]) {
     Return a color`s name (if exists) from RGB
  */
 static char *
-_getNameColorFromRGB(const colorRGB_t *colorRGB) {
+getNameColorFromRGB(const colorRGB_t *colorRGB) {
     return NULL;
 }
 
@@ -45,9 +123,23 @@ _getNameColorFromRGB(const colorRGB_t *colorRGB) {
     Return a color`s name (if exists) from hex
  */
 static char *
-_getNameColorFromHex(const char value[]) {
+getNameColorFromHex(const char value[]) {
     return NULL;
 }
+
+
+// #596982
+// rgb(89, 105, 130)
+// #e0e2e5
+// rgb(224, 226, 229)
+// #011330
+// rgb(1, 19, 48)
+// #095de5
+// rgb(9, 93, 229)
+// #131314
+// rgb(19, 19, 20)
+// #03070c
+// rgb(3, 7, 12)
 
 
 #endif // __COLORS_H__
