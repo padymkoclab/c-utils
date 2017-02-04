@@ -7,7 +7,7 @@
 
 
 /*
-    Return sum integer items in an array
+    Returns sum integer items in an array
  */
 static int
 sumIntArray(const int array[], const unsigned int length) {
@@ -118,7 +118,7 @@ joinIntArrayToString(char *str, const int *array, const unsigned int length) {
 
 
 static unsigned int
-indefOfLeftIntegerArray(int number, int *array, size_t length) {
+indefOfLeftIntArray(int number, int *array, size_t length) {
     for (int i = 0; i < length; ++i) {
         if (array[i] == number) return i;
     }
@@ -127,7 +127,7 @@ indefOfLeftIntegerArray(int number, int *array, size_t length) {
 
 
 static unsigned int
-indefOfRightIntegerArray(int number, int *array, size_t length) {
+indefOfRightIntArray(int number, int *array, size_t length) {
     for (int i = length; i > 0; --i) {
         if (array[i] == number) return i;
     }
@@ -137,7 +137,40 @@ indefOfRightIntegerArray(int number, int *array, size_t length) {
 
 // Need rewrite for change object in-place
 static int
-sliceIntegerArray(int *array ) {
+sliceIntArray(int *array, int new_array[]) {
+    return 0;
+}
+
+
+/*
+    Returns mean value of all items in a integer array
+ */
+static int
+meanIntArray(int *array, size_t length) {
+    return 0;
+}
+
+
+/*
+ */
+static int
+sortIntArray(int *array, size_t length) {
+    return 0;
+}
+
+
+/*
+ */
+static int
+countInIntArray(int *array, size_t length) {
+    return 0;
+}
+
+
+/*
+ */
+static int
+clearInIntArray(int *array, size_t length) {
     return 0;
 }
 

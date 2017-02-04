@@ -2,6 +2,17 @@
  * Generation fake data for the C programing language
  */
 
+
+/*
+
+    initFaker();
+    int arr[5];
+    Faker.fillIntArray(arr, 5);
+    printIntArray(arr, 5, " ");
+    putd(Faker.choiceInt(arr, 5));
+
+ */
+
 #ifndef __FAKER_H__
 #define __FAKER_H__
 

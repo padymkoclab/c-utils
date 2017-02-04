@@ -1,6 +1,45 @@
 /**
- * Functions for working with colors
+ * Utils for working with colors
+ *
+**/
+
+/*
+    char str[18];
+    char hex[8];
+
+    colorRGB_t *colorRGB_;
+    colorRGB_ = (colorRGB_t *)malloc(sizeof(colorRGB_));
+
+    convertColorHexToRGB("fff", colorRGB_);
+    getRGBasString(colorRGB_, str);
+    printf("Hex 'fff' to RGB %s\n", str);
+    convertColorRGBToHex(colorRGB_, hex);
+    printf("RGB %s to hex '%s'\n", str, hex);
+
+    convertColorHexToRGB("000000", colorRGB_);
+    getRGBasString(colorRGB_, str);
+    printf("Hex '000000' to RGB %s\n", str);
+    convertColorRGBToHex(colorRGB_, hex);
+    printf("RGB %s to hex '%s'\n", str, hex);
+
+    convertColorHexToRGB("#000000", colorRGB_);
+    getRGBasString(colorRGB_, str);
+    printf("Hex '#000000' to RGB %s\n", str);
+    convertColorRGBToHex(colorRGB_, hex);
+    printf("RGB %s to hex '%s'\n", str, hex);
+
+    convertColorHexToRGB("#FFF", colorRGB_);
+    getRGBasString(colorRGB_, str);
+    printf("Hex '#FFF' to RGB %s\n", str);
+    convertColorRGBToHex(colorRGB_, hex);
+    printf("RGB %s to hex '%s'\n", str, hex);
+
+    free(colorRGB_);
  */
+
+
+// https://github.com/codebrainz/color-names
+
 
 #ifndef __COLORS_H__
 #define __COLORS_H__
@@ -97,7 +136,7 @@ getRGBasString(const colorRGB_t *colorRGB, char str[18]) {
  */
 static char *
 convertNameColorToRGB(const char value[], const colorRGB_t *colorRGB) {
-    return NULL;
+    return 0;
 }
 
 
@@ -106,7 +145,7 @@ convertNameColorToRGB(const char value[], const colorRGB_t *colorRGB) {
  */
 static int
 convertNameColorToHex(const char colorname[], const char value[7]) {
-    return NULL;
+    return 0;
 }
 
 
@@ -126,20 +165,5 @@ static char *
 getNameColorFromHex(const char value[]) {
     return NULL;
 }
-
-
-// #596982
-// rgb(89, 105, 130)
-// #e0e2e5
-// rgb(224, 226, 229)
-// #011330
-// rgb(1, 19, 48)
-// #095de5
-// rgb(9, 93, 229)
-// #131314
-// rgb(19, 19, 20)
-// #03070c
-// rgb(3, 7, 12)
-
 
 #endif // __COLORS_H__

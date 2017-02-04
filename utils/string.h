@@ -1,4 +1,6 @@
-/* Copyright */
+/**
+ * Utils for working with a single-array chars - string.
+ */
 
 
 #include <stdlib.h>
@@ -33,14 +35,6 @@
 #ifndef ESCAPED_CHARS
     #define ESCAPED_CHARS "\a\b\f\n\r\t\v\\\?\'\"\0"
 #endif
-
-
-
-
-
-typedef struct _CounterWords {
-
-} CounterWords;
 
 
 int
@@ -396,7 +390,8 @@ stripString(char *str, char *substr, char action) {
 }
 
 
-int replaceSubstr(char *str, char *substr_from, char *substr_to) {
+int
+replaceSubstr(char *str, char *substr_from, char *substr_to) {
 
     size_t str_len = strlen(str);
     size_t substr_from_len = strlen(substr_from);
@@ -439,7 +434,8 @@ int replaceSubstr(char *str, char *substr_from, char *substr_to) {
 }
 
 
-int escapeString(char *str) {
+int
+escapeString(char *str) {
 
     const size_t str_len = strlen(str);
 
@@ -506,7 +502,8 @@ int escapeString(char *str) {
 /**
  * Not implemented
  */
-int unEscapeString(char *str) {
+int
+unEscapeString(char *str) {
 
     return -1;
 
@@ -568,50 +565,6 @@ int unEscapeString(char *str) {
 
     free(buffer);
 
-    return 0;
-}
-
-
-static char *_copy_text_for_words;
-char *
-getWords(char *text) {
-
-    char *word;
-
-    if (text != NULL) {
-        _copy_text_for_words = calloc(strlen(text), sizeof(char));
-        strcpy(_copy_text_for_words, text);
-        word = splitString(text, " ");
-    }
-
-    word = splitString(NULL, " ");
-
-    if (word != NULL) {
-        stripString(word, ",.:();!?", 'b');
-    }
-
-    return word;
-}
-
-
-unsigned int
-getCountWords(char *str) {
-
-    char *word = getWords(str);
-
-    unsigned int count = 0;
-    while (word != NULL) {
-        word = getWords(NULL);
-        ++count;
-    }
-
-    return count;
-}
-
-
-int
-counterWords(CounterWords *counter_words, char *text) {
-    // need fill dictionary
     return 0;
 }
 

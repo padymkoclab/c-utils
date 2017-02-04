@@ -3,6 +3,37 @@
  */
 
 
+/*
+    linkedlist_node_t *LinkedList = NewLinkedList(457);
+    printLinkedList(LinkedList);
+    printf("Length: %li\n", getLengthLinkedList(LinkedList));
+    appendToLinkedList(LinkedList, 78);
+    appendToLinkedList(LinkedList, 712);
+    appendToLinkedList(LinkedList, -78);
+    prependToLinkedList(&LinkedList, -100);
+    printLinkedList(LinkedList);
+    printf("Length: %li\n", getLengthLinkedList(LinkedList));
+    popFromBeginLinkedList(&LinkedList);
+    popFromBeginLinkedList(&LinkedList);
+    printLinkedList(LinkedList);
+    printf("Length: %li\n", getLengthLinkedList(LinkedList));
+    popFromEndLinkedList(LinkedList);
+    printf("Length: %li\n", getLengthLinkedList(LinkedList));
+    printf("Is empty: %d\n", isEmptyLinkedList(LinkedList));
+    printLinkedList(LinkedList);
+    popFromEndLinkedList(LinkedList);
+    printf("Length: %li\n", getLengthLinkedList(LinkedList));
+    printf("Is empty: %d\n", isEmptyLinkedList(LinkedList));
+    printLinkedList(LinkedList);
+    prependToLinkedList(&LinkedList, -100);
+    prependToLinkedList(&LinkedList, -100);
+    prependToLinkedList(&LinkedList, -100);
+    prependToLinkedList(&LinkedList, -100);
+    printf("Length: %li\n", getLengthLinkedList(LinkedList));
+    printLinkedList(LinkedList);
+    DestroyLinkedList(LinkedList);
+ */
+
 // https://www.tutorialspoint.com/data_structures_algorithms/linked_list_program_in_c.htm
 // http://www.thegeekstuff.com/2012/08/c-linked-list-example/
 

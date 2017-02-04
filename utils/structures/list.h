@@ -3,6 +3,43 @@
  */
 
 
+/*
+    List *list = NewList();
+
+    list->listPrint(list);
+    list->listAppendInt(list, 19234);
+    list->listPrint(list);
+    list->listAppendFloat(list, -23232.34221);
+    list->listPrint(list);
+    list->listAppendChar(list, 'Z');
+
+    list->listAppendString(list, "some string");
+    list->listAppendString(list, "some string2");
+
+    list->listPrint(list);
+
+    int status;
+
+    status =list->listPop(list);
+    if (status == -1) puts("List is empty");
+    list->listPrint(list);
+
+    status =list->listPop(list);
+    if (status == -1) puts("List is empty");
+    list->listPrint(list);
+
+    status =list->listPop(list);
+    if (status == -1) puts("List is empty");
+    list->listPrint(list);
+
+    list->listAppendChar(list, 'A');
+    list->listAppendInt(list, 132);
+    list->listPrint(list);
+
+    list->listClear(list);
+    list->listPrint(list);
+ */
+
 #ifndef __LIST__H
 #define __LIST__H
 

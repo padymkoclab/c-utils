@@ -1,5 +1,12 @@
-/*
+/**
+ *
+ */
 
+
+/*
+    printUser(getUser("root"));
+    printUser(getUser("1000"));
+    printUsers();
  */
 
 #ifndef __PWD_H__
@@ -11,7 +18,8 @@
 #include "./string.h"
 
 
-struct passwd* getUser(char *id_or_name) {
+struct passwd*
+getUser(char *id_or_name) {
     struct passwd *obj;
     if (isNumericString(id_or_name)) {
         obj = getpwuid(atoi(id_or_name));
@@ -22,7 +30,8 @@ struct passwd* getUser(char *id_or_name) {
 }
 
 
-void printUser(struct passwd *obj) {
+void
+printUser(struct passwd *obj) {
     printf("Login name:\t%s\n", obj->pw_name);
     printf("User ID:\t%d\n", obj->pw_uid);
     printf("Group ID:\t%d\n", obj->pw_gid);
@@ -33,7 +42,8 @@ void printUser(struct passwd *obj) {
 }
 
 
-void printUsers(){
+void
+printUsers(){
 
     const char filename[12] = "/etc/passwd";
     FILE *fp;

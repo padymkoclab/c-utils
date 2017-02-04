@@ -36,13 +36,4 @@ float get_total_cpu_usage() {
 }
 
 
-struct utsname name;
-char* get_platform() {
-    int result = uname(&name);
-    if (result == 0) {
-        return name.sysname;
-    }
-    return "";
-}
-
 #endif // SYSTEM_H

@@ -1,5 +1,5 @@
-/*
-
+/**
+ * Math utils
  */
 
 
@@ -24,25 +24,32 @@ factorial(const long int n) {
 
 
 static unsigned long int
-get_value_sequence_fibonacci(const unsigned int index) {
+_get_value_sequence_fibonacci(const size_t index) {
     if (index == 0 || index == 1) {
         return index;
     }
-    return get_value_sequence_fibonacci(index - 1) + get_value_sequence_fibonacci(index - 2);
+    return _get_value_sequence_fibonacci(index - 1) + _get_value_sequence_fibonacci(index - 2);
 }
 
 static int
-fibonacci(unsigned long int *array, const int length) {
+fibonacci(unsigned long int *array, const size_t length) {
     if (length < 1) return -1;
     for (int i = 0; i < length; ++i) {
-        array[i] = get_value_sequence_fibonacci(i);
+        array[i] = _get_value_sequence_fibonacci(i);
     }
     return 0;
 }
 
 
+
 static bool
-isArmstrongNumber(const unsigned int number) {
+isPrimeNumber(const int) {
+    return true;
+}
+
+
+static bool
+isArmstrongNumber(const size_t number) {
     size_t len = getLengthIntNumber(number);
     char *buffer;
     buffer = malloc(len * sizeof(char) + 1);

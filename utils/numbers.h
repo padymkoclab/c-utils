@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sttbool.h>
 
 
 /*
@@ -42,9 +43,10 @@ getLengthFloatNumber(const float number) {
 
 /**
  * Return converted decimal as binary
+ * FIXME
  */
 char *
-decToBin(int n) {
+decToBin(const int n) {
 
     int is_negative = 0;
     if (n == 0) return "0";
@@ -77,6 +79,13 @@ decToBin(int n) {
     }
 
     return result;
+}
+
+
+// Not Implemented
+static int
+binToDec(char value[], int *number) {
+
 }
 
 

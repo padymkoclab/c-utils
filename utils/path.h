@@ -1,3 +1,30 @@
+/**
+ * Utils for working with paths in a system
+ */
+
+/*
+    SysPath *path = NewSysPath("./utils/");
+    if (path->exists(path) == false) {
+        perror("Path does not exists");
+    }
+
+    path->copy(path, "utils2");
+
+    char **arr;
+    arr = calloc(200, sizeof(char));
+
+    int count = path->listdir(path, arr);
+
+    if (count != -1) {
+        int i = 0;
+        while (i < count) {
+            puts(arr[i]);
+            i++;
+        }
+    }
+
+    path->remove(path);
+ */
 
 #ifndef __SYSPATH_H__
 #define __SYSPATH_H__
