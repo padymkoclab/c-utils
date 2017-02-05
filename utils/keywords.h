@@ -44,9 +44,8 @@ static const char *KEYWORDS[32] = {
  */
 static bool
 isKeyword(char word[]) {
-    for (unsigned int i = 0; i < 32; ++i) {
-        printf("%s %s %d\n", word, KEYWORDS[i], i);
-        if (strcmp(word, KEYWORDS[i])) return true;
+    for (unsigned int i = 0; i < 29; ++i) {
+        if (strcmp(word, KEYWORDS[i]) == 0) return true;
     }
     return false;
 }

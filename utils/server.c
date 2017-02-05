@@ -1,3 +1,0 @@
-/**
- * Simple a web-server
- */

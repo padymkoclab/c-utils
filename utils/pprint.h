@@ -14,7 +14,7 @@ void putd(int value) {
 
 
 void printIntArray(int array[], size_t length, char *ending_charapter) {
-    for (int i = 0; i < length; ++i) {
+    for (size_t i = 0; i < length; ++i) {
         printf("%d", array[i]);
         if (i < length - 1) {
             printf("%s", ending_charapter);

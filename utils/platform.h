@@ -39,7 +39,6 @@
     #define PLATFORM_NAME NULL
 #endif
 
-
 /*
     Determination POSIX version, if is OS is UNIX-style, including BSD, Linux, OSX, and Solaris
  */
@@ -51,17 +50,28 @@
 #endif
 
 
-// Retrun a name of platform
+// Returns a name of platform
 static char *
 get_platform_name() {
     return (PLATFORM_NAME == NULL) ? "" : PLATFORM_NAME;
 }
 
 
-// Return a POSIX version of a system, if the system support it, otherwise return 0
+// Returns a POSIX version of a system, if the system support it, otherwise return 0
 static long int
 get_posix_version() {
     return (IS_POSIX_SYSTEM == 1) ? _POSIX_VERSION : 0;
+}
+
+
+enum platform_bit_t { _unknownArch, _64bitArch, _32bitArch};
+
+static enum platform_bit_t
+get_architecture(){
+    size_t int_size = sizeof(int*);
+    if (int_size == 8) return _64bitArch;
+    else if (int_size == 4) return _32bitArch;
+    else return _unknownArch;
 }
 
 
