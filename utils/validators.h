@@ -1,5 +1,6 @@
 /**
  * Validators
+ * All return boolean: true or false
  */
 
 #ifndef __VALIDATORS_H__
@@ -9,62 +10,92 @@
 #include <stdbool.h>
 
 
-bool
-isValidURL(char *value) {
+/*
+
+ */
+static bool
+is_valid_url(char *value) {
     return false;
 };
 
 
-bool
-isValidFilename(char *value) {
+/*
+
+ */
+static bool
+is_valid_filename(char *value) {
     return false;
 };
 
 
-bool
-isValidDirpath(char *value) {
+/*
+
+ */
+static bool
+is_valid_dirpath(char *value) {
     return false;
 };
 
 
-bool
-isValidEmail(char *value) {
+/*
+
+ */
+static bool
+is_valid_email(char *value) {
     return false;
 };
 
 
-bool
-isValidDomain(char *value) {
+/*
+
+ */
+static bool
+is_valid_domain(char *value) {
     return false;
 };
 
 
-bool
-isValidUUID(char *value) {
+/*
+
+ */
+static bool
+is_valid_uuid(char *value) {
     return false;
 };
 
 
-bool
-isValidIPv4(char *value) {
+/*
+
+ */
+static bool
+is_valid_ipv4(char *value) {
     return false;
 };
 
 
-bool
-isValidIPv6(char *value) {
+/*
+
+ */
+static bool
+is_valid_ipv6(char *value) {
     return false;
 };
 
 
-bool
-isValidMacAddress(char *value) {
+/*
+
+ */
+static bool
+is_valid_mac_address(char *value) {
     return false;
 };
 
 
-bool
-isValidSlug(char *value) {
+/*
+
+ */
+static bool
+is_valid_slug(char *value) {
     return false;
 };
 

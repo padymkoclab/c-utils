@@ -10,8 +10,9 @@
 /*
     Return length integer if without considering sign
  */
-size_t
-getLengthIntNumber(const int number) {
+static unsigned int
+get_length_int_number(const int number)
+{
     size_t length = 1;
     int copy_number = (number < 0) ? -number : number;
     while ((copy_number = copy_number / 10) > 0) {
@@ -25,8 +26,9 @@ getLengthIntNumber(const int number) {
     NotImplemented
     http://stackoverflow.com/questions/5459437/given-a-double-need-to-find-how-many-digits-in-total
  */
-size_t
-getLengthFloatNumber(const float number) {
+static size_t
+get_length_float_number(const float number)
+{
     size_t length = 1;
     int copy_number = (number < 0) ? -number : number;
 
@@ -45,8 +47,9 @@ getLengthFloatNumber(const float number) {
  * Return converted decimal as binary
  * FIXME
  */
-char *
-decToBin(const int n) {
+static char *
+dec_to_bin(const int n)
+{
 
     int is_negative = 0;
     if (n == 0) return "0";
@@ -84,7 +87,8 @@ decToBin(const int n) {
 
 // Not Implemented
 static int
-binToDec(char value[], int *number) {
+bin_to_dec(char value[], int *number)
+{
 
 }
 

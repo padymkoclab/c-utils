@@ -10,6 +10,8 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+#include "func.h"
+
 
 #ifndef __STRING_H__
     #define __STRING_H__
@@ -37,7 +39,7 @@
 #endif
 
 
-int
+static int
 getCharactersByCodesRange(char *buffer, const unsigned int start_code, const unsigned int end_code) {
 
     if (end_code > 128) return -1;
@@ -53,8 +55,8 @@ getCharactersByCodesRange(char *buffer, const unsigned int start_code, const uns
 }
 
 
-int
-toUpperCase(char *str) {
+static int
+to_upper_case(char *str) {
     int i = 0;
     do {
         str[i] = toupper(str[i]);
@@ -64,8 +66,8 @@ toUpperCase(char *str) {
 }
 
 
-int
-toLowerCase(char *str) {
+static int
+to_lower_case(char *str) {
     int i = 0;
     do {
         str[i] = tolower(str[i]);
@@ -75,8 +77,8 @@ toLowerCase(char *str) {
 }
 
 
-int
-toTitleCase(char *str) {
+static int
+to_title_case(char *str) {
     int i = 0;
     bool is_new_word = true;
 
@@ -99,8 +101,8 @@ toTitleCase(char *str) {
 }
 
 
-int
-toCapitalizeCase(char *str) {
+static int
+to_capitalize_case(char *str) {
     int i = 0;
     while (str[i]) {
         if (i > 0) {
@@ -114,8 +116,8 @@ toCapitalizeCase(char *str) {
 }
 
 
-int
-toSwapCase(char *str) {
+static int
+to_swap_case(char *str) {
     int i = 0;
     do {
         if (isupper(str[i]) != 0) {
@@ -129,8 +131,8 @@ toSwapCase(char *str) {
 }
 
 
-int
-toCamelCase(char *str) {
+static int
+to_camel_case(char *str) {
     int i = 0;
     while (str[i] != '\0') {
         if (i % 2 == 0) {
@@ -144,8 +146,8 @@ toCamelCase(char *str) {
 }
 
 
-int
-startSwithString(char *str, char *prefix) {
+static bool
+is_start_swith_string(char *str, char *prefix) {
     size_t prefix_len = strlen(prefix);
     if (strlen(str) >= prefix_len) {
         return 0 == strncmp(str, prefix, prefix_len);
@@ -154,8 +156,8 @@ startSwithString(char *str, char *prefix) {
 }
 
 
-int
-endSwithString(char *str, char *ending) {
+static bool
+is_end_swith_string(char *str, char *ending) {
     size_t ending_len = strlen(ending);
     size_t str_len = strlen(str);
     if (str_len >= ending_len) {
@@ -165,8 +167,8 @@ endSwithString(char *str, char *ending) {
 }
 
 
-int
-containsString(char *str, char *substr) {
+static bool
+is_contains_string(char *str, char *substr) {
     size_t substr_len = strlen(substr);
     if (strlen(str) >= substr_len) {
         return 0 != strstr(str, substr);
@@ -180,8 +182,8 @@ containsString(char *str, char *substr) {
  * @param  str string
  * @return     bool
  */
-int
-isNumericString(char *str) {
+static int
+is_numeric_string(char *str) {
     int i = 0;
     do {
         if (isdigit(str[i]) == 0) {
@@ -193,23 +195,26 @@ isNumericString(char *str) {
 }
 
 
-int
-reverseString(char *str) {
+/*
+    Reverse an string in place.
 
-    const size_t str_len = strlen(str);
-    const float half_len = str_len / 2;
-
-    for (int i = 0; i < half_len; ++i) {
-        char temp = str[i];
-        str[i] = str[str_len - i - 1];
-        str[str_len - i - 1] = temp;
+    char str[] = "Simple text";
+    puts(str);
+    reverseString(str);
+    puts(str);
+*/
+static int
+reverse_string(char string[]) {
+    size_t str_len = strlen(string);
+    for (int i = 0; i < str_len / 2; ++i) {
+        SWAP(char, string[i], string[str_len - i - 1]);
     }
     return 0;
 }
 
 
-int
-sliceString(char *str, const unsigned int slice_from, const unsigned int slice_to) {
+static int
+slice_string(char *str, const unsigned int slice_from, const unsigned int slice_to) {
 
     unsigned int slice_to_copy = slice_to;
 
@@ -236,8 +241,8 @@ sliceString(char *str, const unsigned int slice_from, const unsigned int slice_t
 
 
 static char *_copy_text_for_split;
-char *
-splitString(char *text, char *delimiter) {
+static char *
+split_string(char *text, char *delimiter) {
 
     if (strcmp(delimiter, "") == 0) return NULL;
 
@@ -298,8 +303,8 @@ splitString(char *text, char *delimiter) {
 };
 
 
-unsigned int
-indexOfString(const char *str, const char *substr, char direction) {
+static int
+index_of_string(const char *str, const char *substr, char direction) {
 
     if (direction == 'l' || direction == 'r') {
 
@@ -329,8 +334,8 @@ indexOfString(const char *str, const char *substr, char direction) {
 }
 
 
-int
-getCountSubstrOfString(char *str, char *substr) {
+static unsigned int
+count_substr_of_string(char *str, char *substr) {
 
     size_t str_len = strlen(str);
     size_t substr_len = strlen(substr);
@@ -351,14 +356,14 @@ getCountSubstrOfString(char *str, char *substr) {
 /*
  * Strip string from left, right or both.
  */
-int
-stripString(char *str, char *substr, char action) {
+static int
+strip_string(char *str, char *substr, char action) {
 
     const char allowed_action[4] = "blr";
     const size_t str_len = strlen(str);
     const char temp[2] = {action, '\0'};
 
-    if (indexOfString(allowed_action, temp, 'l') < 0) {
+    if (index_of_string(allowed_action, temp, 'l') < 0) {
         return -1;
     }
 
@@ -374,24 +379,24 @@ stripString(char *str, char *substr, char action) {
 
     for (int i = 0; i < str_len; ++i) {
         single_char[0] = str[i];
-        if (indexOfString(substr, single_char, 'l') == -1) break;
+        if (index_of_string(substr, single_char, 'l') == -1) break;
         shift_from_left += 1;
     }
 
     for (int i = str_len - 1; i >= 0; --i) {
         single_char[0] = str[i];
-        if (indexOfString(substr, single_char, 'l') == -1) break;
+        if (index_of_string(substr, single_char, 'l') == -1) break;
         shift_from_right += 1;
     }
 
-    sliceString(str, shift_from_left, str_len - shift_from_right);
+    slice_string(str, shift_from_left, str_len - shift_from_right);
 
     return 0;
 }
 
 
-int
-replaceSubstr(char *str, char *substr_from, char *substr_to) {
+static int
+replace_substr_of_string(char *str, char *substr_from, char *substr_to) {
 
     size_t str_len = strlen(str);
     size_t substr_from_len = strlen(substr_from);
@@ -399,7 +404,7 @@ replaceSubstr(char *str, char *substr_from, char *substr_to) {
 
     if (substr_from_len > str_len) return 0;
 
-    unsigned int countSubstr = getCountSubstrOfString(str, substr_from);
+    unsigned int countSubstr = count_substr_of_string(str, substr_from);
 
     if (countSubstr == 0) return 0;
 
@@ -434,8 +439,8 @@ replaceSubstr(char *str, char *substr_from, char *substr_to) {
 }
 
 
-int
-escapeString(char *str) {
+static int
+escape_string(char *str) {
 
     const size_t str_len = strlen(str);
 
@@ -499,11 +504,11 @@ escapeString(char *str) {
 }
 
 
-/**
- * Not implemented
- */
-int
-unEscapeString(char *str) {
+/*
+    Not implemented
+*/
+static int
+unescape_string(char *str) {
 
     return -1;
 
@@ -565,6 +570,17 @@ unEscapeString(char *str) {
 
     free(buffer);
 
+    return 0;
+}
+
+
+static int
+truncate_chars_string() {
+    return 0;
+}
+
+static int
+truncate_words_string() {
     return 0;
 }
 

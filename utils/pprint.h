@@ -5,26 +5,66 @@
 #include <stdio.h>
 #include <time.h>
 
-#include <sys/stat.h>
+#include "platform.h"
+
+#if IS_POSIX_SYSTEM == 1
+    #include <sys/stat.h>
+#endif
 
 
-void putd(int value) {
+/*
+    Print an integer value and the new line chapter
+ */
+void
+putd(int value) {
     printf("%d\n", value);
 }
 
 
-void printIntArray(int array[], size_t length, char *ending_charapter) {
+/*
+    Print an array of integer items
+ */
+void
+print_int_array(int array[], size_t length) {
+    char ending_charapter[] = ", ";
+    putchar('[');
     for (size_t i = 0; i < length; ++i) {
         printf("%d", array[i]);
         if (i < length - 1) {
             printf("%s", ending_charapter);
         }
     }
-    puts("");
+    puts("]");
 }
 
 
-void printStatStruct(char *path, struct stat path_stat) {
+/*
+    Print an array of float items
+ */
+void
+print_float_array(float array[], size_t length) {
+    char ending_charapter[] = ", ";
+    putchar('[');
+    for (size_t i = 0; i < length; ++i) {
+        printf("%f", array[i]);
+        if (i < length - 1) {
+            printf("%s", ending_charapter);
+        }
+    }
+    puts("]");
+}
+
+
+/*
+    Print a stat for a path, if it a POSIX-compliant file system
+ */
+void
+printStatStruct(char *path, struct stat path_stat) {
+    if (IS_POSIX_SYSTEM == 0) {
+        errno = ENOTSUP;
+        perror("Is not POSIX system");
+        return;
+    }
     printf("\tStat for path:\t\t\t\t\t\t%s\n", path);
     printf("\tUser ID of owner:\t\t\t\t\t%u\n", path_stat.st_uid);
     printf("\tGroup ID of owner:\t\t\t\t\t%u\n", path_stat.st_gid);

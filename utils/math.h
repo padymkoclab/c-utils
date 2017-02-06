@@ -13,7 +13,8 @@
 
 
 static unsigned long int
-factorial(const long int n) {
+factorial(const long int n)
+{
     if (n == 1 || n == 0) {
         return 1;
     } else if (n < 0) {
@@ -24,7 +25,8 @@ factorial(const long int n) {
 
 
 static unsigned long int
-_get_value_sequence_fibonacci(const size_t index) {
+_get_value_sequence_fibonacci(const size_t index)
+{
     if (index == 0 || index == 1) {
         return index;
     }
@@ -32,7 +34,8 @@ _get_value_sequence_fibonacci(const size_t index) {
 }
 
 static int
-fibonacci(unsigned long int *array, const size_t length) {
+fibonacci(unsigned long int *array, const size_t length)
+{
     if (length < 1) return -1;
     for (int i = 0; i < length; ++i) {
         array[i] = _get_value_sequence_fibonacci(i);
@@ -41,15 +44,17 @@ fibonacci(unsigned long int *array, const size_t length) {
 }
 
 
-
+// Not implemented
 static bool
-isPrimeNumber(const int) {
+is_prime_number(const int)
+{
     return true;
 }
 
 
 static bool
-isArmstrongNumber(const size_t number) {
+is_armstrong_number(const size_t number)
+{
     size_t len = getLengthIntNumber(number);
     char *buffer;
     buffer = malloc(len * sizeof(char) + 1);
@@ -66,6 +71,13 @@ isArmstrongNumber(const size_t number) {
     free(buffer);
 
     return sum == number;
+}
+
+
+static int
+factors_number(const int number)
+{
+
 }
 
 

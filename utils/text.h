@@ -15,10 +15,14 @@ typedef struct _CounterWords {
 
 
 
+/*
+    Return count words in text
+ */
 // Rewrite it FIXME!!!
 static char *_copy_text_for_words;
 char *
-getWords(char *text) {
+count_words(char text[])
+{
 
     char *word;
 
@@ -53,8 +57,30 @@ getCountWords(char *str) {
 }
 
 
-int
-counterWords(CounterWords *counter_words, char *text) {
+static int
+counter_words(CounterWords *counter_words, char *text)
+{
     // need fill dictionary
+    return 0;
+}
+
+
+/*
+Wraps words at specified line length.
+
+Argument: number of characters at which to wrap the text
+
+For example:
+
+{{ value|wordwrap:5 }}
+If value is Joel is a slug, the output would be:
+
+Joel
+is a
+slug
+ */
+static int
+wordwrap(char text[], const unsigned int width)
+{
     return 0;
 }
