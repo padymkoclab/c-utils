@@ -8,131 +8,79 @@
 
 
 #include <string.h>
+#include <stdlib.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include "func.h"
 
 
-// return size of array (not from pointer on array)
-#define SIZE_ARRAY(array) (sizeof(array) / sizeof(array[0]))
-
-#define MIN_ARRAY(array, length)
-#define MAX_ARRAY
-#define IN_ARRAY
-
+// for processing errors
 extern int errno;
 
 
-/*
-    Returns sum integer items in an array.
+// determination size of an array (not from a pointer on this array)
+#define SIZE_ARRAY(array) (sizeof(array) / sizeof(array[0]))
 
-    int arr[4] = {1, -2, 3, -4};
-    printf("Sum = %d\n", sum_int_array(arr, 4));
- */
-static int
-sum_int_array(const int array[], const size_t length) {
+// a minimal value in an array
+#define MIN_ARRAY(array, length, variable, status) \
+{\
+    if (length > 0) { \
+        variable = array[0]; \
+        for (int i = 1; i < length; ++i) \
+            if (array[i] < variable) variable = array[i]; \
+        status = 0; \
+    } \
+    else if (length == 0) status = 1; \
+    else status = -1; \
+}
 
-    int sum = 0;
+// a maximal value in an array
+#define MAX_ARRAY(array, length, variable, status) \
+{\
+    if (length > 0) { \
+        variable = array[0]; \
+        for (int i = 1; i < length; ++i) \
+            if (array[i] > variable) variable = array[i]; \
+        status = 0; \
+    } \
+    else if (length == 0) status = 1; \
+    else status = -1; \
+}
 
-    for (int i = 0; i < length; ++i) {
-        sum += array[i];
-    }
-    return sum;
+// determination sum of items of an array
+// after processing variable status will be changed to:
+// -1, 0, 1
+#define SUM_ARRAY(array, length, variable, status) \
+{\
+    if (length > 0) \
+        for (int i = 0; i < length; ++i) { \
+            variable += array[i]; \
+        status = 0; \
+    } \
+    else if (length == 0) status = 1; \
+    else status = -1; \
+}
+
+// reverse an array of any numberic type in place
+#define REVERSE_ARRAY(array, length, status) \
+{ \
+    if (length > 0) { \
+        for (int i = 0; i < length / 2; ++i) { \
+            SWAP(int, array[i], array[length - i - 1]); \
+        } \
+        *status = 0; \
+    } \
+    else if (length < 0) *status = -1; \
+    else *status = 1; \
 }
 
 
-static int
-sum_array(const void *array, const size_t length, void *sum) {
-
-    if (length == 0) {
-        errno = EINVAL;
-        fprintf(stderr, "%s: Length must be more zero\n", strerror(errno));
-        return -1;
-    }
-    void *c = (char*)89 + sizeof(int);
-    memcpy(sum, &c, 10);
-    // &sum = 32;
-
-    // for (int i = 0; i < length; ++i) {
-    //     sum += array[i];
-    // }
-    // return sum;
-    return 0;
-}
-
-
-/*
-    Reverse an integer array in place.
-
-    int arr[4] = {1, -2, 3, -4};
-    print_int_array(arr, 4);
-    reverse_int_array(arr, 4);
-    print_int_array(arr, 4);
- */
-static int
-reverse_int_array(int *array, const size_t length) {
-    for (int i = 0; i < length / 2; ++i) {
-        SWAP(int, array[i], array[length - i - 1]);
-    }
-    return 0;
-}
-
-
-/*
-    Reverse an float array in place.
-
-    float arrFloat[4] = {0.1, -2.12, 1.3, -4.2};
-    print_float_array(arrFloat, 4);
-    reverse_float_array(arrFloat, 4);
-    print_float_array(arrFloat, 4);
- */
-static int
-reverse_float_array(float *array, const size_t length) {
-    for (int i = 0; i < length / 2; ++i) {
-        SWAP(float, array[i], array[length - i - 1]);
-    }
-    return 0;
-}
-
-
-/*
-    Return max integer in an array.
- */
-static int
-max_int_array(const int *array, const size_t length) {
-
-    if (length == 0) {
-        errno = EINVAL;
-        fprintf(stderr, "%s: Length must be more zero\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-
-    int max;
-    for (int i = 0; i < length; ++i) {
-        if (array[i] > max) max = array[i];
-    }
-    return max;
-}
-
-
-/*
-    Return min integer in an array.
- */
-static int
-min_int_array(const int *array, const size_t length) {
-
-    if (length == 0) {
-        errno = EINVAL;
-        fprintf(stderr, "%s: Length must be more zero\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-
-    int min;
-    for (int i = 0; i < length; ++i) {
-        if (array[i] < min) min = array[i];
-    }
-    return min;
-}
+enum inter_direction_array
+{
+    LEFT_INTER_ARRAY  = 'l',
+    RIGHT_INTER_ARRAY = 'r'
+};
 
 
 /*
@@ -202,11 +150,19 @@ range_int_array(int array[], const int start, const int end, const int step) {
 }
 
 
+
 /*
+    #define CAT(a, b) #a #b
+
     Concatenate items of an integer array to string
+
+    http://stackoverflow.com/questions/1597007/creating-c-macro-with-and-line-token-concatenation-with-positioning-macr
+    http://stackoverflow.com/questions/30931799/concatenate-char-array-and-int-array-and-store-in-string-array
+    http://stackoverflow.com/questions/1597007/creating-c-macro-with-and-line-token-concatenation-with-positioning-macr
+    http://stackoverflow.com/questions/4681325/join-or-implode-in-c
  */
 static int
-joinIntArrayToString(char *str, const int *array, const unsigned int length) {
+join_array(char *str, const int array[], const size_t length) {
 
     int i;
     char *buffer;
@@ -223,27 +179,23 @@ joinIntArrayToString(char *str, const int *array, const unsigned int length) {
 }
 
 
-static unsigned int
-indefOfLeftIntArray(int number, int *array, size_t length) {
-    for (int i = 0; i < length; ++i) {
-        if (array[i] == number) return i;
-    }
-    return -1;
-}
+static int
+indef_of_array(const void *array, const size_t length, const int number, const char direction) {
 
-
-static unsigned int
-indefOfRightIntArray(int number, int *array, size_t length) {
-    for (int i = length; i > 0; --i) {
-        if (array[i] == number) return i;
-    }
+    // for (int i = 0; i < length; ++i) {
+    //     if (array[i] == number) return i;
+    // }
+    // for (int i = length; i > 0; --i) {
+    //     if (array[i] == number) return i;
+    // }
     return -1;
 }
 
 
 // Need rewrite for change object in-place
 static int
-sliceIntArray(int *array, int new_array[]) {
+slice_array(int *array, int new_array[])
+{
     return 0;
 }
 
@@ -252,7 +204,8 @@ sliceIntArray(int *array, int new_array[]) {
     Returns mean value of all items in a integer array
  */
 static int
-meanIntArray(int *array, size_t length) {
+mean_array(int *array, size_t length)
+{
     return 0;
 }
 
@@ -260,7 +213,8 @@ meanIntArray(int *array, size_t length) {
 /*
  */
 static int
-sortIntArray(int *array, size_t length) {
+sort_array(int *array, size_t length)
+{
     return 0;
 }
 
@@ -268,7 +222,8 @@ sortIntArray(int *array, size_t length) {
 /*
  */
 static int
-countInIntArray(int *array, size_t length) {
+count_in_array(int *array, size_t length)
+{
     return 0;
 }
 
@@ -276,7 +231,39 @@ countInIntArray(int *array, size_t length) {
 /*
  */
 static int
-clearInIntArray(int *array, size_t length) {
+clear_array(int *array, size_t length)
+{
+    return 0;
+}
+
+
+/*
+    http://stackoverflow.com/questions/8766258/alternative-to-multidimensional-array-in-c
+ */
+static int
+flatten_array()
+{
+    return 0;
+}
+
+
+static int
+pop_from_array() {
+    return 0;
+}
+
+
+static int
+push_to_array() {
+    return 0;
+}
+
+
+/*
+    http://stackoverflow.com/questions/1696074/how-can-i-concatenate-two-arrays-in-c
+ */
+static int
+extend_array() {
     return 0;
 }
 

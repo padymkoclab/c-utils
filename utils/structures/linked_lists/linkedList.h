@@ -1,8 +1,12 @@
 /**
  * Implementation linked list
+ *
+ *   https://www.tutorialspoint.com/data_structures_algorithms/linked_list_program_in_c.htm
+ *   http://www.thegeekstuff.com/2012/08/c-linked-list-example/
  */
 
 
+//
 /*
     linkedlist_node_t *LinkedList = NewLinkedList(457);
     printLinkedList(LinkedList);
@@ -34,8 +38,6 @@
     DestroyLinkedList(LinkedList);
  */
 
-// https://www.tutorialspoint.com/data_structures_algorithms/linked_list_program_in_c.htm
-// http://www.thegeekstuff.com/2012/08/c-linked-list-example/
 
 #include <stdio.h>
 #include <stdlib.h>

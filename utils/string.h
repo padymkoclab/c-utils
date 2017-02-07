@@ -3,6 +3,10 @@
  */
 
 
+#ifndef __STRING_H__
+#define __STRING_H__
+
+
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -12,9 +16,6 @@
 
 #include "func.h"
 
-
-#ifndef __STRING_H__
-    #define __STRING_H__
 
 #ifndef DIGITS
     #define DIGITS "0123456789"
@@ -582,6 +583,12 @@ truncate_chars_string() {
 static int
 truncate_words_string() {
     return 0;
+}
+
+
+static int
+partition_string() {
+
 }
 
 

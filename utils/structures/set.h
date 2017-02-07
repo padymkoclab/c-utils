@@ -1,5 +1,9 @@
 /**
- * Implementation set
+ * Implementation a set
+ *
+ * http://stackoverflow.com/questions/2537681/how-to-implement-a-set
+ * http://stackoverflow.com/questions/2630738/c-how-to-implement-set-data-structure
+ * https://en.wikipedia.org/wiki/Set_(abstract_data_type)
  */
 
 

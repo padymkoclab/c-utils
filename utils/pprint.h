@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <errno.h>
 
 #include "platform.h"
 
@@ -12,46 +13,27 @@
 #endif
 
 
+extern int errno;
+
+
+// print items of an array by a format
+#define PRINT_ARRAY(array, length, format) \
+{ \
+    putchar('['); \
+    for (size_t i = 0; i < length; ++i) { \
+        printf(format, array[i]); \
+        if (i < length - 1) printf(", "); \
+    } \
+    puts("]"); \
+}
+
+
 /*
     Print an integer value and the new line chapter
  */
 void
-putd(int value) {
+putd(const int value) {
     printf("%d\n", value);
-}
-
-
-/*
-    Print an array of integer items
- */
-void
-print_int_array(int array[], size_t length) {
-    char ending_charapter[] = ", ";
-    putchar('[');
-    for (size_t i = 0; i < length; ++i) {
-        printf("%d", array[i]);
-        if (i < length - 1) {
-            printf("%s", ending_charapter);
-        }
-    }
-    puts("]");
-}
-
-
-/*
-    Print an array of float items
- */
-void
-print_float_array(float array[], size_t length) {
-    char ending_charapter[] = ", ";
-    putchar('[');
-    for (size_t i = 0; i < length; ++i) {
-        printf("%f", array[i]);
-        if (i < length - 1) {
-            printf("%s", ending_charapter);
-        }
-    }
-    puts("]");
 }
 
 

@@ -8,6 +8,12 @@
     putd(getCountWords(str));
  */
 
+// Idea: word cloud
+
+
+#ifndef __TEXT_H__
+#define __TEXT_H__
+
 
 typedef struct _CounterWords {
 
@@ -84,3 +90,7 @@ wordwrap(char text[], const unsigned int width)
 {
     return 0;
 }
+
+
+
+#endif // __TEXT_H__
