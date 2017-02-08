@@ -33,10 +33,20 @@
 
 static int get_version();
 
+#include <X11/Xlib.h>
+
 
 int
 main(const int argc, const char *argv[])
 {
+    // http://surfingtroves.blogspot.com/2011/01/how-to-get-screen-resolution-in-linux-c.html
+    // http://stackoverflow.com/questions/14526522/how-to-get-screen-height-and-width-in-c
+    // http://stackoverflow.com/questions/16455024/how-can-i-get-screen-resolution-in-c-operating-system-qnx-or-linux
+
+    XWindowAttributes xxx;
+
+    // the  c hardware information
+
     // http://man7.org/linux/man-pages/man3/setlocale.3.html
     // https://www.tutorialspoint.com/c_standard_library/locale_h.htm
     // https://www.linux.com/news/controlling-your-locale-environment-variables

@@ -1,5 +1,7 @@
 /**
  * Utils for a system
+ *
+ * https://pythonhosted.org/psutil/
  */
 
 
@@ -7,6 +9,7 @@
 #define __SYSTEM_H__
 
 #include <stdio.h>
+#include <errno.h>
 
 #include "array.h"
 #include "platform.h"
@@ -16,11 +19,22 @@
 #endif
 
 
+extern int errno;
+
+struct statusMemory {
+    long unsigned int cache;
+    long unsigned int free;
+    long unsigned int used;
+    long unsigned int total;
+};
+
+
 /*
     Return a current CPU usage of the system
  */
 static float
-get_total_cpu_usage() {
+get_total_cpu_usage()
+{
 
     if (IS_POSIX_SYSTEM == 1) {
 
@@ -54,10 +68,57 @@ get_total_cpu_usage() {
 }
 
 
-// hard memory: free, used
-// cache memory
-// RAM
-// hardware
+/*
+    Fills struct memory usage for whole system is passed NULL
+    otherwise for process id.
+ */
+int
+get_memory_status(const int process_id)
+{
+    if (process_id < 0) {
+        // errno
+        return -1;
+    }
+    return 0;
+}
+
+
+int
+get_memory_info()
+{
+    // return cache memory size
+    // return RAM memory size
+    // return total memory size
+}
+
+
+int
+get_hardware_list()
+{
+
+}
+
+
+// Show information about the file system on which each FILE resides, or all file systems by default
+int
+filesystem_info()
+{
+
+}
+
+
+// Summarize disk usage of each FILE, recursively for directories.
+int
+disk_usage()
+{
+
+}
+
+int
+screen_resolution()
+{
+
+}
 
 
 #endif // __SYSTEM_H__
