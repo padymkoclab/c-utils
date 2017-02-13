@@ -14,38 +14,33 @@
 #include <stdarg.h>
 #include <stdbool.h>
 
+
 #include "func.h"
+#include "testing/unittest.h"
 
 
-#ifndef DIGITS
-    #define DIGITS "0123456789"
-#endif
-
-#ifndef ASCII_LOWERCASE
-    #define ASCII_LOWERCASE "abcdefghijklmnopqrstuvwxyz\0"
-#endif
+#define STR_ERROR_VALUE_ERROR "ValueError"
 
 
-#ifndef ASCII_UPPERCASE
-    #define ASCII_UPPERCASE "ABCDEFGHIJKLMNOPQRSTUVWXYZ\0"
-#endif
+#define ESCAPED_CHARS "\a\b\f\n\r\t\v\\\?\'\"\0"
+#define DIGITS "0123456789"
+#define ASCII_LOWERCASE "abcdefghijklmnopqrstuvwxyz"
+#define ASCII_UPPERCASE "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+#define ASCII_LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+#define RUSSIAN_LOWERCASE "абвгдеёжзийклмнопрстуфхцчшщыьэюя"
+#define RUSSIAN_UPPERCASE "АБВГДЕЁЖЗИЙКЛМНОПРТУФХЦЧШЩЫЭЮЯ"
+#define RUSSIAN_LETTERS "АБВГДЕЁЖЗИЙКЛМНОПРТУФХЦЧШЩЫЭЮЯабвгдеёжзийклмнопрстуфхцчшщыьэюя"
 
 
-#ifndef ASCII_LETTERS
-    #define ASCII_LETTERS "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-#endif
+// DOES NOT WORK
+int
+str_get_characters_by_codes_range(char *buffer, const unsigned int start_code, const unsigned int end_code)
+{
+    if (end_code > 128)
+        return -1;
 
-#ifndef ESCAPED_CHARS
-    #define ESCAPED_CHARS "\a\b\f\n\r\t\v\\\?\'\"\0"
-#endif
-
-
-static int
-getCharactersByCodesRange(char *buffer, const unsigned int start_code, const unsigned int end_code) {
-
-    if (end_code > 128) return -1;
-
-    if (start_code < 1 || end_code < start_code) return -2;
+    if (start_code < 1 || end_code < start_code)
+        return -2;
 
     int i = 0;
     for (int code = start_code; code < end_code; ++code) {
@@ -56,36 +51,53 @@ getCharactersByCodesRange(char *buffer, const unsigned int start_code, const uns
 }
 
 
-static int
-to_upper_case(char *str) {
+char *
+str_to_upper_case(char str[])
+{
     int i = 0;
+    char *result;
+    result = malloc(sizeof(char) * strlen(str) + 1);
+
     do {
-        str[i] = toupper(str[i]);
+        result[i] = toupper(str[i]);
         ++i;
     } while (str[i] != '\0');
-    return 0;
+
+    result[i] = '\0';
+
+    return result;
 }
 
 
-static int
-to_lower_case(char *str) {
+char *
+str_to_lower_case(char str[])
+{
     int i = 0;
+    char *result;
+    result = malloc(sizeof(char) * strlen(str) + 1);
+
     do {
-        str[i] = tolower(str[i]);
+        result[i] = tolower(str[i]);
         ++i;
     } while (str[i] != '\0');
-    return 0;
+
+    result[i] = '\0';
+
+    return result;
 }
 
 
-static int
-to_title_case(char *str) {
+char *
+str_to_title_case(char str[])
+{
     int i = 0;
     bool is_new_word = true;
+    char *result;
+    result = malloc(sizeof(char) * strlen(str) + 1);
 
     while (str[i]) {
         if (is_new_word == true) {
-            str[i] = toupper(str[i]);
+            result[i] = toupper(str[i]);
             is_new_word = false;
         } else {
             if (str[i] == ' ') {
@@ -93,63 +105,81 @@ to_title_case(char *str) {
                 ++i;
                 continue;
             } else {
-                str[i] = tolower(str[i]);
+                result[i] = tolower(str[i]);
             }
         }
         ++i;
     }
-    return 0;
+
+    return result;
 }
 
 
-static int
-to_capitalize_case(char *str) {
+char *
+str_to_capitalize_case(char str[])
+{
     int i = 0;
+    char *result;
+    result = malloc(sizeof(char) * strlen(str) + 1);
+
     while (str[i]) {
         if (i > 0) {
-            str[i] = tolower(str[i]);
+            result[i] = tolower(str[i]);
         } else {
-            str[i] = toupper(str[i]);
+            result[i] = toupper(str[i]);
         }
         ++i;
     }
-    return 0;
+
+    return result;
 }
 
 
-static int
-to_swap_case(char *str) {
+char *
+str_to_swap_case(char str[])
+{
     int i = 0;
+    char *result;
+    result = malloc(sizeof(char) * strlen(str) + 1);
+
     do {
         if (isupper(str[i]) != 0) {
-            str[i] = tolower(str[i]);
+            result[i] = tolower(str[i]);
         } else if (islower(str[i]) != 0) {
-            str[i] = toupper(str[i]);
+            result[i] = toupper(str[i]);
         }
         ++i;
     } while (str[i] != '\0');
-    return 0;
+
+    return result;
 }
 
 
-static int
-to_camel_case(char *str) {
+char *
+str_to_camel_case(char *str)
+{
     int i = 0;
+    char *result;
+    result = malloc(sizeof(char) * strlen(str) + 1);
+
     while (str[i] != '\0') {
         if (i % 2 == 0) {
-            str[i] = tolower(str[i]);
+            result[i] = tolower(str[i]);
         } else {
-            str[i] = toupper(str[i]);
+            result[i] = toupper(str[i]);
         }
         ++i;
     }
-    return 0;
+
+    return result;
 }
 
 
-static bool
-is_start_swith_string(char *str, char *prefix) {
+bool
+is_start_swith_string(char *str, char *prefix)
+{
     size_t prefix_len = strlen(prefix);
+
     if (strlen(str) >= prefix_len) {
         return 0 == strncmp(str, prefix, prefix_len);
     }
@@ -157,7 +187,7 @@ is_start_swith_string(char *str, char *prefix) {
 }
 
 
-static bool
+bool
 is_end_swith_string(char *str, char *ending) {
     size_t ending_len = strlen(ending);
     size_t str_len = strlen(str);
@@ -168,7 +198,7 @@ is_end_swith_string(char *str, char *ending) {
 }
 
 
-static bool
+bool
 is_contains_string(char *str, char *substr) {
     size_t substr_len = strlen(substr);
     if (strlen(str) >= substr_len) {
@@ -183,8 +213,9 @@ is_contains_string(char *str, char *substr) {
  * @param  str string
  * @return     bool
  */
-static int
-is_numeric_string(char *str) {
+bool
+is_numeric_string(char *str)
+{
     int i = 0;
     do {
         if (isdigit(str[i]) == 0) {
@@ -204,8 +235,9 @@ is_numeric_string(char *str) {
     reverseString(str);
     puts(str);
 */
-static int
-reverse_string(char string[]) {
+int
+reverse_string(char string[])
+{
     size_t str_len = strlen(string);
     for (int i = 0; i < str_len / 2; ++i) {
         SWAP(char, string[i], string[str_len - i - 1]);
@@ -214,8 +246,9 @@ reverse_string(char string[]) {
 }
 
 
-static int
-slice_string(char *str, const unsigned int slice_from, const unsigned int slice_to) {
+int
+slice_string(char *str, const unsigned int slice_from, const unsigned int slice_to)
+{
 
     unsigned int slice_to_copy = slice_to;
 
@@ -241,9 +274,10 @@ slice_string(char *str, const unsigned int slice_from, const unsigned int slice_
 }
 
 
-static char *_copy_text_for_split;
-static char *
-split_string(char *text, char *delimiter) {
+char *_copy_text_for_split;
+char *
+split_string(char *text, char *delimiter)
+{
 
     if (strcmp(delimiter, "") == 0) return NULL;
 
@@ -304,8 +338,9 @@ split_string(char *text, char *delimiter) {
 };
 
 
-static int
-index_of_string(const char *str, const char *substr, char direction) {
+int
+index_of_string(const char *str, const char *substr, char direction)
+{
 
     if (direction == 'l' || direction == 'r') {
 
@@ -335,8 +370,9 @@ index_of_string(const char *str, const char *substr, char direction) {
 }
 
 
-static unsigned int
-count_substr_of_string(char *str, char *substr) {
+unsigned int
+count_substr_of_string(char *str, char *substr)
+{
 
     size_t str_len = strlen(str);
     size_t substr_len = strlen(substr);
@@ -357,8 +393,9 @@ count_substr_of_string(char *str, char *substr) {
 /*
  * Strip string from left, right or both.
  */
-static int
-strip_string(char *str, char *substr, char action) {
+int
+strip_string(char *str, char *substr, char action)
+{
 
     const char allowed_action[4] = "blr";
     const size_t str_len = strlen(str);
@@ -396,8 +433,9 @@ strip_string(char *str, char *substr, char action) {
 }
 
 
-static int
-replace_substr_of_string(char *str, char *substr_from, char *substr_to) {
+int
+replace_substr_of_string(char *str, char *substr_from, char *substr_to)
+{
 
     size_t str_len = strlen(str);
     size_t substr_from_len = strlen(substr_from);
@@ -440,8 +478,9 @@ replace_substr_of_string(char *str, char *substr_from, char *substr_to) {
 }
 
 
-static int
-escape_string(char *str) {
+int
+escape_string(char *str)
+{
 
     const size_t str_len = strlen(str);
 
@@ -508,8 +547,9 @@ escape_string(char *str) {
 /*
     Not implemented
 */
-static int
-unescape_string(char *str) {
+int
+unescape_string(char *str)
+{
 
     return -1;
 
@@ -575,21 +615,93 @@ unescape_string(char *str) {
 }
 
 
-static int
-truncate_chars_string() {
+int
+truncate_chars_string()
+{
     return 0;
 }
 
-static int
-truncate_words_string() {
+int
+truncate_words_string()
+{
     return 0;
 }
 
 
-static int
-partition_string() {
+int
+partition_string()
+{
+    return 0;
+}
+
+
+char *
+str_repeat(char str[], unsigned int times)
+{
+    if (times < 1) {
+        fprintf(stderr, "%s: %s\n", STR_ERROR_VALUE_ERROR, "Times must be more 0");
+        return NULL;
+    }
+
+    char *result;
+    size_t str_len = strlen(str);
+    result = malloc(sizeof(char) * str_len + 1);
+
+    while (times--) {
+        strcat(result, str);
+    }
+    return result;
+}
+
+
+/**
+ * Tests
+ */
+
+
+void
+test_str_to_upper_case()
+{
+    assertStringEqual(str_to_upper_case("With my tongue"), "WITH MY TONGUE");
+    assertStringEqual(str_to_upper_case("TONGUE"), "TONGUE");
+    assertStringEqual(str_to_upper_case(""), "");
+    assertStringEqual(str_to_upper_case("A123a"), "A123A");
+}
+
+
+void
+test_str_to_lower_case()
+{
+    assertStringEqual(str_to_lower_case(" They will be expanded. "), " they will be expanded. ");
+    assertStringEqual(str_to_lower_case("AJKNDJWDNW"), "ajkndjwdnw");
+    assertStringEqual(str_to_lower_case(""), "");
+    assertStringEqual(str_to_lower_case("A123a"), "a123a");
+}
+
+
+void
+test_str_to_title_case()
+{
 
 }
+
+
+void
+test_start_end_swith()
+{
+
+}
+
+
+void
+test_str()
+{
+    test_str_to_upper_case();
+    test_str_to_lower_case();
+    test_str_to_title_case();
+}
+
+
 
 
 #endif // __STRING_H__

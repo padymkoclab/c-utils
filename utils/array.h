@@ -121,7 +121,7 @@ enum inter_direction_array
     }
 
  */
-static int
+int
 range_int_array(int array[], const int start, const int end, const int step) {
 
     int value;
@@ -161,7 +161,7 @@ range_int_array(int array[], const int start, const int end, const int step) {
     http://stackoverflow.com/questions/1597007/creating-c-macro-with-and-line-token-concatenation-with-positioning-macr
     http://stackoverflow.com/questions/4681325/join-or-implode-in-c
  */
-static int
+int
 join_array(char *str, const int array[], const size_t length) {
 
     int i;
@@ -179,7 +179,7 @@ join_array(char *str, const int array[], const size_t length) {
 }
 
 
-static int
+int
 indef_of_array(const void *array, const size_t length, const int number, const char direction) {
 
     // for (int i = 0; i < length; ++i) {
@@ -193,7 +193,7 @@ indef_of_array(const void *array, const size_t length, const int number, const c
 
 
 // Need rewrite for change object in-place
-static int
+int
 slice_array(int *array, int new_array[])
 {
     return 0;
@@ -203,7 +203,7 @@ slice_array(int *array, int new_array[])
 /*
     Returns mean value of all items in a integer array
  */
-static int
+int
 mean_array(int *array, size_t length)
 {
     return 0;
@@ -212,7 +212,7 @@ mean_array(int *array, size_t length)
 
 /*
  */
-static int
+int
 sort_array(int *array, size_t length)
 {
     return 0;
@@ -221,7 +221,7 @@ sort_array(int *array, size_t length)
 
 /*
  */
-static int
+int
 count_in_array(int *array, size_t length)
 {
     return 0;
@@ -230,7 +230,7 @@ count_in_array(int *array, size_t length)
 
 /*
  */
-static int
+int
 clear_array(int *array, size_t length)
 {
     return 0;
@@ -240,20 +240,20 @@ clear_array(int *array, size_t length)
 /*
     http://stackoverflow.com/questions/8766258/alternative-to-multidimensional-array-in-c
  */
-static int
+int
 flatten_array()
 {
     return 0;
 }
 
 
-static int
+int
 pop_from_array() {
     return 0;
 }
 
 
-static int
+int
 push_to_array() {
     return 0;
 }
@@ -262,7 +262,7 @@ push_to_array() {
 /*
     http://stackoverflow.com/questions/1696074/how-can-i-concatenate-two-arrays-in-c
  */
-static int
+int
 extend_array() {
     return 0;
 }

@@ -9,17 +9,23 @@
 #define __SYSTEM_H__
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <errno.h>
 
-#include "array.h"
+// #include <gtk/gtk.h>
+
 #include "platform.h"
 
 #if IS_POSIX_SYSTEM == 1
+    #include <sys/statvfs.h>
     #include <sys/utsname.h>
+
+    #include <X11/Xlib.h>
 #endif
 
 
 extern int errno;
+
 
 struct statusMemory {
     long unsigned int cache;
@@ -29,42 +35,12 @@ struct statusMemory {
 };
 
 
-/*
-    Return a current CPU usage of the system
- */
-static float
+// Not implemented
+// Return a current CPU usage of the system
+float
 get_total_cpu_usage()
 {
-
-    if (IS_POSIX_SYSTEM == 1) {
-
-        FILE *file;
-        file = fopen("/proc/stat", "r");
-
-        if (file == NULL) {
-            perror("No such file or directory\n");
-            return -1;
-        }
-
-        int values[7];
-        char cpu_label[3];
-        fscanf(
-            file,
-            "%s %d %d %d %d %d %d %d",
-            cpu_label, &values[0], &values[1], &values[2], &values[3], &values[4], &values[5], &values[6]
-        );
-
-        int full_cpu = sumIntArray(values, 7);
-
-        float cpu_usage = values[3] * 100 / full_cpu;
-
-        fclose(file);
-
-        return cpu_usage;
-
-    } else {
-        return -2;
-    }
+    return 0;
 }
 
 
@@ -75,10 +51,6 @@ get_total_cpu_usage()
 int
 get_memory_status(const int process_id)
 {
-    if (process_id < 0) {
-        // errno
-        return -1;
-    }
     return 0;
 }
 
@@ -89,21 +61,49 @@ get_memory_info()
     // return cache memory size
     // return RAM memory size
     // return total memory size
+
+    return 0;
 }
 
 
 int
 get_hardware_list()
 {
-
+    return 0;
 }
 
 
+// http://www.thegeekstuff.com/2011/04/identify-file-system-type/?utm_source=twitterfeed&utm_medium=twitter
 // Show information about the file system on which each FILE resides, or all file systems by default
-int
+bool
 filesystem_info()
 {
+    if (IS_POSIX_SYSTEM != 1)
+        return false;
 
+    struct statvfs stat;
+    unsigned long long free_space;
+
+    const char *paths[] = {
+        "/media/setivolkylany/WorkDisk",
+        "/",
+        "/run",
+        "/dev",
+        "/unknown",
+    };
+
+    printf("%-30s | %s", "Device", "Free space\n");
+    puts("-------------------------------------------------");
+    for (int i = 0; i < 5; ++i) {
+        if ((statvfs(paths[i], &stat)) == -1) {
+            free_space = -1;
+            return false;
+        }
+        free_space = (unsigned long long)(stat.f_bsize * stat.f_bavail) / 1;
+        printf("%30s | %lli\n", paths[i], free_space);
+    }
+
+    return true;
 }
 
 
@@ -111,7 +111,7 @@ filesystem_info()
 int
 disk_usage()
 {
-
+    return 0;
 }
 
 
@@ -122,6 +122,7 @@ disk_usage()
 int
 print_screen_resolution_by_GTK(int argc, char *argv[])
 {
+    /*
     GdkScreen *screen;
     gint width, height;
 
@@ -132,6 +133,7 @@ print_screen_resolution_by_GTK(int argc, char *argv[])
         height = gdk_screen_get_height(screen);
         g_printf("Current screen resolution: %dx%d (by used GTK+)\n", width, height);
     }
+    */
     return 0;
 }
 
@@ -147,6 +149,7 @@ print_screen_resolution_by_GTK(int argc, char *argv[])
 int
 print_display_resolution_by_X11()
 {
+    /*
     Display *display;
     Window window;
     XWindowAttributes xw_attrs;
@@ -163,7 +166,7 @@ print_display_resolution_by_X11()
     printf("Current window resolution: %dx%d (by used X11)\n", xw_attrs.width, xw_attrs.height);
 
     XCloseDisplay(display);
-
+    */
     return 0;
 }
 
