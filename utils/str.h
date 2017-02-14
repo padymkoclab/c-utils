@@ -156,7 +156,7 @@ str_to_swap_case(char str[])
 
 
 char *
-str_to_camel_case(char *str)
+str_to_camel_case(char str[])
 {
     int i = 0;
     char *result;
@@ -176,7 +176,7 @@ str_to_camel_case(char *str)
 
 
 bool
-is_start_swith_string(char *str, char *prefix)
+str_startswith(char str[], char prefix[])
 {
     size_t prefix_len = strlen(prefix);
 
@@ -188,7 +188,8 @@ is_start_swith_string(char *str, char *prefix)
 
 
 bool
-is_end_swith_string(char *str, char *ending) {
+str_endswith(char str[], char ending[])
+{
     size_t ending_len = strlen(ending);
     size_t str_len = strlen(str);
     if (str_len >= ending_len) {
@@ -199,44 +200,104 @@ is_end_swith_string(char *str, char *ending) {
 
 
 bool
-is_contains_string(char *str, char *substr) {
-    size_t substr_len = strlen(substr);
-    if (strlen(str) >= substr_len) {
-        return 0 != strstr(str, substr);
-    }
+str_is_alpha(char str[])
+{
     return false;
 }
 
 
-/**
- * Return true is whole string contains only digits, otherwise return false.
- * @param  str string
- * @return     bool
- */
 bool
-is_numeric_string(char *str)
+str_is_alnum(char str[])
 {
-    int i = 0;
-    do {
-        if (isdigit(str[i]) == 0) {
-            return false;
-        };
-        i++;
-    } while (str[i] != '\0');
-    return 0;
+    return false;
 }
 
 
-/*
-    Reverse an string in place.
+bool
+str_is_digit(char str[])
+{
+    return false;
+}
 
-    char str[] = "Simple text";
-    puts(str);
-    reverseString(str);
-    puts(str);
-*/
-int
-reverse_string(char string[])
+
+bool
+str_is_lower_case(char str[])
+{
+    return false;
+}
+
+
+bool
+str_is_upper_case(char str[])
+{
+    return false;
+}
+
+
+bool
+str_is_title_case(char str[])
+{
+    return false;
+}
+
+
+bool
+str_is_camel_case(char str[])
+{
+    return false;
+}
+
+
+bool
+str_is_capitalize_case(char str[])
+{
+    return false;
+}
+
+
+
+bool
+str_is_numeric(char str[])
+{
+    return false;
+}
+
+
+// Uncompleted
+char *
+str_center(char str[], unsigned int new_length, char placeholder)
+{
+    size_t str_length = strlen(str);
+
+    if (new_length <= str_length)
+        return str;
+
+    char *buffer, *left_part, *right_part;
+    unsigned int total_rest_length, left_length, right_length;
+
+    buffer = malloc(sizeof(char) * new_length);
+
+    total_rest_length = new_length - str_length;
+
+    if (total_rest_length % 2 == 0) {
+        left_length = right_length = total_rest_length / 2;
+    } else {
+        left_length = right_length = total_rest_length / 2;
+    }
+
+    float v = 11;
+    printf("%f\n", 1 / 2);
+
+    // sprintf(buffer, "%s%s%s", left_part, str, right_part);
+    // free(left_part);
+    // free(right_part);
+
+    return "buffer";
+}
+
+
+bool
+str_reverse(char string[])
 {
     size_t str_len = strlen(string);
     for (int i = 0; i < str_len / 2; ++i) {
@@ -662,27 +723,31 @@ str_repeat(char str[], unsigned int times)
 void
 test_str_to_upper_case()
 {
-    assertStringEqual(str_to_upper_case("With my tongue"), "WITH MY TONGUE");
-    assertStringEqual(str_to_upper_case("TONGUE"), "TONGUE");
-    assertStringEqual(str_to_upper_case(""), "");
-    assertStringEqual(str_to_upper_case("A123a"), "A123A");
+    assertStringEquals(str_to_upper_case("With my tongue"), "WITH MY TONGUE");
+    assertStringEquals(str_to_upper_case("TONGUE"), "TONGUE");
+    assertStringEquals(str_to_upper_case(""), "");
+    assertStringEquals(str_to_upper_case("A123a"), "A123A");
 }
 
 
 void
 test_str_to_lower_case()
 {
-    assertStringEqual(str_to_lower_case(" They will be expanded. "), " they will be expanded. ");
-    assertStringEqual(str_to_lower_case("AJKNDJWDNW"), "ajkndjwdnw");
-    assertStringEqual(str_to_lower_case(""), "");
-    assertStringEqual(str_to_lower_case("A123a"), "a123a");
+    assertStringEquals(str_to_lower_case(" They will be expanded. "), " they will be expanded. ");
+    assertStringEquals(str_to_lower_case("AJKNDJWDNW"), "ajkndjwdnw");
+    assertStringEquals(str_to_lower_case(""), "");
+    assertStringEquals(str_to_lower_case("A123a"), "a123a");
 }
 
 
 void
 test_str_to_title_case()
 {
-
+    assertStringEquals(str_to_title_case(" They will be expanded. "), " They Will Be Expanded. ");
+    assertStringEquals(str_to_title_case("AJKNDJWDNW"), "Ajkndjwdnw");
+    assertStringEquals(str_to_title_case(" test XTES"), " Test Xtes");
+    assertStringEquals(str_to_title_case(""), "");
+    assertStringEquals(str_to_title_case("A123a"), "A123a");
 }
 
 
@@ -699,9 +764,9 @@ test_str()
     test_str_to_upper_case();
     test_str_to_lower_case();
     test_str_to_title_case();
+
+    puts(str_center("AC", 50, '*'));
 }
-
-
 
 
 #endif // __STRING_H__

@@ -15,71 +15,94 @@
 #include <time.h>
 #include <errno.h>
 
-#include "./string.h"
+
+#ifdef TESTING_DISPLAY_ALL
+    #undef TESTING_DISPLAY_ALL
+    #define TESTING_DISPLAY_ALL
+#endif
+
+
+#include "./str.h"
 #include "./func.h"
+#include "./testing/unittest.h"
 
-#define ERROR_MIN_MORE_MAX_VALUE "Min value is more max value, returned 0"
+
+#define RANDOM_ERROR "RandomError"
+#define RANDOM_ERROR_MIN_MORE_MAX "Min value is more max value, returned 0"
 
 
-/*
-    Returns a random integer in between min (inclusive) and max (inclusive)
-    Returns 0 if min > max and to write a error message.
- */
-static int
-random_integer(const int min, const int max) {
-    if (max == min) return min;
-    else if (min < max) return rand() % (max - min + 1) + min;
-
-    // return 0 if min > max
-    errno = EINVAL;
-    perror(ERROR_MIN_MORE_MAX_VALUE);
-    return 0;
+int
+random_integer(const int min, const int max)
+{
+    if (max == min)
+        return min;
+    return rand() % (max - min + 1) + min;
 }
 
 
-/*
-    Returns a random integer in between min (inclusive) and max (inclusive).
-    Returns 0 if min > max and to write a error message.
- */
-static float
-random_float(const float min, const float max) {
-    if (max == min) return min;
-    else if (min < max) return (max - min) * ((float)rand() / RAND_MAX) + min;
 
-    // return 0 if min > max
-    errno = EINVAL;
-    perror(ERROR_MIN_MORE_MAX_VALUE);
-    return 0;
+float
+random_float(const float min, const float max)
+{
+    if (max == min)
+        return min;
+    return (max - min) * ((float)rand() / RAND_MAX) + min;
 }
 
 
-/*
-    Return boolean: true (1) or false (0)
- */
-static bool
-random_boolean() {
-
-    return (bool)random_integer(0, 1);
+bool
+random_boolean()
+{
+    return random_integer(0, 1);
 }
 
 
-/*
-    Fills an array with random integer values in a range
- */
-static int
-random_int_array(int array[], const size_t length, const int min, const int max){
-    for (int i = 0; i < length; ++i) {
+char
+random_choice_from_str(char str[])
+{
+    size_t len = strlen(str);
+
+    if (len == 0)
+        return '\0';
+
+    int index = random_integer(0, len - 1);
+    return str[index];
+}
+
+
+bool
+random_int_array(int array[], const size_t length, const int min, const int max)
+{
+    for (int i = 0; i < length; ++i)
         array[i] = random_integer(min, max);
-    }
-    return 0;
+    return true;
+}
+
+
+char *
+random_word(unsigned int min_length, unsigned int max_length)
+{
+    if (min_length < 1 || max_length < 1 || min_length > max_length)
+        return NULL;
+
+    char *word;
+    int word_length;
+
+    word_length = random_integer(min_length, max_length);
+    word = malloc(sizeof(char) * word_length);
+
+    for (int i = 0; i < word_length; ++i)
+        word[i] = random_choice_from_str(ASCII_LOWERCASE);
+
+    return word;
 }
 
 
 // http://stackoverflow.com/questions/6127503/shuffle-array-in-c/6127808#6127808
 // https://gist.github.com/kgabis/1204145
-static int
-shuffle_array(void *array, const size_t length) {
-
+int
+random_shuffle_array(void *array, const size_t length)
+{
     void *temp;
 
     if (length > 1) {
@@ -87,9 +110,9 @@ shuffle_array(void *array, const size_t length) {
         for (int i = 0; i < length; ++i) {
             rand_index = random_integer(0, length - 1);
 
-            // temp = (&array)[i];
-            // (&array)[i] = (&array)[rand_index];
-            // (&array)[rand_index] = &(temp);
+            temp = (&array)[i];
+            (&array)[i] = (&array)[rand_index];
+            (&array)[rand_index] = &(temp);
         }
     }
 
@@ -97,570 +120,224 @@ shuffle_array(void *array, const size_t length) {
 }
 
 
-char random_charfromstring(char *str) {
+char
+random_charfromstring(char *str)
+{
     int index = (rand() % strlen(str));
     return str[index];
 }
 
 
-// Need update
-static char*
-RandWord(unsigned int min_length, unsigned int max_length, char register_case) {
-/*
-    if (min_length < 1 || max_length < 1 || min_length > max_length) {
-        return false;
-    }
+// random_filepath
+// random_dirpath
+// random_date
+// random_time
+// random_datetime
+// random_color
+// random_lorem
+// random_name
+// random_phonenumber
+// random_sentence
+// random_text
+// random_username
+// random_password
+// random_email
+// random_url
+// random_domain
+// random_countrycode
+// random_countryname
+// random_weekday
+// random_month
+// random_year
+// random_day
+// random_timezone
+// random_currencycod
+// random_currencynam
+// random_longitude
+// random_latitude
+// random_slug
+// random_image
+// random_city
+// random_imageurl
+// random_first_name
+// random_second_name
+// random_fullname
+// random_ipv4
+// random_ipv6
+// random_useragent
+// random_profesion
+// random_uuid
+// random_mimetype
+// random_fileext
+// random_filetype
+// random_language
+// random_json
+// random_yaml
+// random_xml
+// random_address
+// random_creadit_card
 
-    // const char choices_register[5] = "ulct";
-
-    // if (indexOfString(choices_register, register_case) == -1) {
-    //     return NULL;
-    // };
-
-    if (register_case == 'u' || register_case == 't' || register_case == 'l' || register_case == 'c') {
-
-        char *word;
-        int word_length;
-
-        word_length = getRandInt(min_length, max_length);
-        word = malloc(sizeof(char) * word_length);
-
-        for (int i = 0; i < word_length; ++i) {
-            word[i] = getRandCharFromString(ASCII_LOWERCASE);
-        }
-
-        if (register_case == 'u') {
-            toUpperCase(word);
-        } else if (register_case == 't') {
-            toTitleCase(word);
-        } else if (register_case == 'c') {
-            toCamelCase(word);
-        }
-
-        return word;
-    }
-    return false;
-*/
-}
-
-
-/*
-    Return
+/**
+ * Tests
  */
-static int
-random_filepath() {
 
-    return 0;
-}
 
-
-/*
-    Return
- */
-static int
-random_dirpath() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_date() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Time() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Datetime() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Color() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Lorem() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Name() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_PhoneNumber()
- {
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Float() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Double() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Char() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Word() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Sentence() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Text() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Username() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Password() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Email() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Url() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Domain() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_CountryCode()
- {
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_CountryName()
- {
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Weekday() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Month() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Year() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Day() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Timezone() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_CurrencyCode(
-    ) {
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_CurrencyName(
-    ) {
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Longitude() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Latitude() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Slug() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Image() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_City() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_ImageURL() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_First_name()
+void
+test_random_integer()
 {
-    return 0;
+    int value;
+
+    value = random_integer(1, 10);
+    assertInRange(value, 1, 10);
+
+    value = random_integer(-10000, 100000);
+    assertInRange(value, -10000, 100000);
+
+    value = random_integer(-100, -100);
+    assertEquals(value, -100);
+
+    value = random_integer(-1, 0);
+    assertInRange(value, -1, 0);
 }
 
 
-/*
-    Return
- */
-static int
-random_Second_name()
- {
-    return 0;
+void
+test_random_float()
+{
+    float value;
+
+    value = random_float(1, 10);
+    assertInRange(value, 1, 10);
+
+    value = random_float(-100000, 100000);
+    assertInRange(value, -100000, 100000);
+
+    value = random_float(-1, 1);
+    assertInRange(value, -1, 1);
+
+    value = random_float(-0.5, -0.25);
+    assertInRange(value, -0.5, -0.25);
+
+    value = random_float(0.668, 0.668);
+    assertEquals(value, 0.668);
+
+    value = random_float(-0.0007, -0.0006);
+    assertInRange(value, -0.0007, -0.0006);
+
+    value = random_float(0.99, 0.5);
+    assertEquals(value, 0);
 }
 
 
-/*
-    Return
- */
-static int
-random_FullName() {
+void
+test_random_boolean()
+{
+    bool value;
 
-    return 0;
+    value = random_boolean();
+    assertTrue((value == false || value == true));
+    assertInRange(random_boolean(), 0, 1);
 }
 
 
-/*
-    Return
- */
-static int
-random_Ipv4() {
+void
+test_random_int_array()
+{
+    int array1[5];
+    random_int_array(array1, 5, 1, 100);
+    for (int i = 0; i < 5; ++i)
+        assertInRange(array1[i], 1, 100);
 
-    return 0;
+    int array2[1];
+    random_int_array(array2, 1, -1000, 1000);
+    assertInRange(array2[0], -1000, 1000);
+
+    int array3[100];
+    random_int_array(array3, 100, -100000, 100000);
+    for (int i = 0; i < 100; ++i)
+        assertInRange(array3[i], -100000, 100000);
+
+    int array4[10];
+    random_int_array(array4, 10, -1, 1);
+    for (int i = 0; i < 10; ++i)
+        assertInRange(array4[i], -1, 1);
+
+    int array5[10];
+    random_int_array(array5, 10, 100, 100);
+    for (int i = 0; i < 5; ++i)
+        assertEquals(array5[i], 100);
 }
 
 
-/*
-    Return
- */
-static int
-random_Ipv6() {
+void
+test_random_choice_from_str()
+{
+    char chr;
+    chr = random_choice_from_str("abcd");
+    assertTrue((chr == 'a' || chr == 'b' || chr == 'c' || chr == 'd'));
 
-    return 0;
+    chr = random_choice_from_str("j s o n.h ");
+    assertTrue((chr == ' ' || chr == 's' || chr == 'o' || chr == 'n' || chr == '.' || chr == 'h' || chr == ' '));
+
+    assertEquals(random_choice_from_str("zzzzz"), 'z');
+    assertEquals(random_choice_from_str(" "), ' ');
+    assertEquals(random_choice_from_str(""), '\0');
+    assertEquals(random_choice_from_str("T"), 'T');
 }
 
 
-/*
-    Return
- */
-static int
-random_UserAgent() {
+void
+test_random_word()
+{
+    char *word;
+    word = calloc(20, sizeof(char));
 
-    return 0;
+    assertNull(random_word(0, 10));
+    assertNull(random_word(-1, 5));
+    assertNull(random_word(-10, -3));
+    assertNull(random_word(5, 0));
+    assertNull(random_word(0, 0));
+
+    word = random_word(1, 20);
+    assertInRange(strlen(word), 1, 20);
+
+    word = random_word(2, 20);
+    assertInRange(strlen(word), 2, 20);
+
+    word = random_word(3, 20);
+    assertInRange(strlen(word), 3, 20);
+
+    word = random_word(4, 20);
+    assertInRange(strlen(word), 4, 20);
+
+    word = random_word(5, 20);
+    assertInRange(strlen(word), 5, 20);
+
+    word = random_word(10, 20);
+    assertInRange(strlen(word), 10, 20);
+
+    word = random_word(19, 20);
+    assertInRange(strlen(word), 19, 20);
+
+    word = random_word(20, 20);
+    assertEquals(strlen(word), 20);
+
 }
 
 
-/*
-    Return
- */
-static int
-random_Profesion() {
+void
+test_random()
+{
+    srand(time(NULL));
 
-    return 0;
-}
+    // test_random_integer();
+    // test_random_float();
+    // test_random_boolean();
+    // test_random_int_array();
+    // test_random_word();
+    test_random_choice_from_str();
+    test_random_word();
 
-
-/*
-    Return
- */
-static int
-random_UUID() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Mimetype() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_FileExt() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_FileType() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Language() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_JSON() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Yaml() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Xml() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Address() {
-
-    return 0;
-}
-
-
-/*
-    Return
- */
-static int
-random_Creadit_card(
-    ) {
-    return 0;
 }
 
 

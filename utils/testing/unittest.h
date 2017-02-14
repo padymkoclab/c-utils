@@ -1,3 +1,9 @@
+/**
+ *
+ * https://github.com/antirez/redis/blob/27e29f4fe61d822eb23d948bcb72db76c4c887e5/deps/jemalloc/test/include/test/test.h
+ *
+ */
+
 
 #ifndef __UNITTEST_H__
 #define __UNITTEST_H__
@@ -23,12 +29,16 @@
 #endif
 
 
-#define TESTING_PATTERN_SUCCESS "OK: %s (%s, %d)\n"
-#define TESTING_PATTERN_SUCCESS_COLOR "OK: \033[1;37;42mOK\033[00m: %s (%s, %d)\n"
-#define TESTING_PATTERN_FAIL "FAIL: %s (%s, %d) %s %s %s\n"
-#define TESTING_PATTERN_FAIL_COLOR "FAIL: \033[1;37;41mFAILED\033[00m: %s (%s, %d) %s %s %s\n"
+#define TESTING_PATTERN_FAIL_BASIC "FAIL: %s (%s, %d)"
 
-#define TEST_OK(func_name, filepath, line_number) \
+
+#define TESTING_PATTERN_SUCCESS "OK: %s (%s, %d)\n"
+#define TESTING_PATTERN_SUCCESS_COLOR "\033[1;37;42mOK\033[00m: %s (%s, %d)\n"
+#define TESTING_PATTERN_FAIL "FAIL: %s (%s, %d) %s %s %s\n"
+#define TESTING_PATTERN_FAIL_COLOR "\033[1;37;41mFAIL\033[00m: %s (%s, %d) %s %s %s\n"
+
+
+#define PRINT_TEST_OK(func_name, filepath, line_number) \
 { \
     if (TESTING_DISPLAY_ALL == 1) \
         printf( \
@@ -37,43 +47,32 @@
         ); \
 }
 
-#define TEST_FAILED(func_name, filepath, line_number, condition, val1, val2) \
+#define PRINT_TEST_FAIL(func_name, filepath, line_number, condition, value1, value2) \
 { \
     fprintf( \
         stderr, \
         (TESTING_DISPLAY_WITH_COLOR == 1) ? TESTING_PATTERN_FAIL_COLOR: TESTING_PATTERN_FAIL, \
-        func_name, filepath, line_number, #val1, #condition, #val2 \
+        func_name, filepath, line_number, #value1, condition, #value2 \
     ); \
 }
 
-#define assertEqual(val1, val2) val1 == val2\
-    ? TEST_OK(__func__, __FILE__, __LINE__): TEST_FAILED( __func__, __FILE__, __LINE__, "!=", val1, val2)
 
-#define assertNotEqual(val1, val2) val1 != val2 ? TEST_OK(__func__, __FILE__, __LINE__):\
-    ? TEST_OK(__func__, __FILE__, __LINE__): TEST_FAILED( __func__, __FILE__, __LINE__, "==", val1, val2)
-
-#define assertTrue(value) value == true\
-    ? TEST_OK(__func__, __FILE__, __LINE__): TEST_FAILED( __func__, __FILE__, __LINE__, "!=", value, true)
-
-#define assertFalse(value) value == false\
-    ? TEST_OK(__func__, __FILE__, __LINE__): TEST_FAILED( __func__, __FILE__, __LINE__, "!=", value, false)
-
-#define assertStringEqual(str1, str2) \
+// Does not work
+#define PRINT_TEST_ARRAY_FAIL(func_name, filepath, line_number, condition, array1, array2, length) \
 { \
-    if (strcmp(str1, str2) == 0) \
-        TEST_OK(__func__, __FILE__, __LINE__) \
-    else \
-        TEST_FAILED(__func__, __FILE__, __LINE__, "!=", str1, str2) \
+    fprintf( \
+        stderr, \
+        (TESTING_DISPLAY_WITH_COLOR == 1) ? TESTING_PATTERN_FAIL_BASIC: TESTING_PATTERN_FAIL_BASIC, \
+        func_name, filepath, line_number \
+    ); \
+    for (int i = 0; i < length; ++i) { \
+        printf("%s", array1[i]);\
+    } \
+    puts(""); \
 }
 
-#define assertStringNotEqual(str1, str2) strcmp(str1, str2) == 0\
-    ? TEST_OK(__func__, __FILE__, __LINE__): TEST_FAILED(__func__, __FILE__, __LINE__, "==", str1, str2)
 
-#define assertIn()
-#define assertNotIn()
-#define assertLess()
-#define assertLessEqual()
-#define assertGreater()
-#define assertGreaterEqual()
+#include "assert.c"
+
 
 #endif // __UNITTEST_H__

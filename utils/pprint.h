@@ -32,7 +32,8 @@ extern int errno;
     Print an integer value and the new line chapter
  */
 void
-putd(const int value) {
+putd(const int value)
+{
     printf("%d\n", value);
 }
 
@@ -41,7 +42,8 @@ putd(const int value) {
     Print a stat for a path, if it a POSIX-compliant file system
  */
 void
-printStatStruct(char *path, struct stat path_stat) {
+printStatStruct(char *path, struct stat path_stat)
+{
     if (IS_POSIX_SYSTEM == 0) {
         errno = ENOTSUP;
         perror("Is not POSIX system");
