@@ -16,6 +16,7 @@
 
 
 #include "func.h"
+#include "pprint.h"
 #include "testing/unittest.h"
 
 
@@ -30,6 +31,13 @@
 #define RUSSIAN_LOWERCASE "абвгдеёжзийклмнопрстуфхцчшщыьэюя"
 #define RUSSIAN_UPPERCASE "АБВГДЕЁЖЗИЙКЛМНОПРТУФХЦЧШЩЫЭЮЯ"
 #define RUSSIAN_LETTERS "АБВГДЕЁЖЗИЙКЛМНОПРТУФХЦЧШЩЫЭЮЯабвгдеёжзийклмнопрстуфхцчшщыьэюя"
+
+
+
+enum str_direction_t {
+    LEFT,
+    RIGHT,
+};
 
 
 // DOES NOT WORK
@@ -55,17 +63,16 @@ char *
 str_to_upper_case(char str[])
 {
     int i = 0;
-    char *result;
-    result = malloc(sizeof(char) * strlen(str) + 1);
+    char *buffer;
+    buffer = malloc(sizeof(char) * strlen(str) + 1);
 
     do {
-        result[i] = toupper(str[i]);
+        buffer[i] = toupper(str[i]);
         ++i;
     } while (str[i] != '\0');
+    buffer[i] = '\0';
 
-    result[i] = '\0';
-
-    return result;
+    return buffer;
 }
 
 
@@ -73,85 +80,80 @@ char *
 str_to_lower_case(char str[])
 {
     int i = 0;
-    char *result;
-    result = malloc(sizeof(char) * strlen(str) + 1);
+    char *buffer;
+    buffer = malloc(sizeof(char) * strlen(str) + 1);
 
     do {
-        result[i] = tolower(str[i]);
+        buffer[i] = tolower(str[i]);
         ++i;
     } while (str[i] != '\0');
+    buffer[i] = '\0';
 
-    result[i] = '\0';
-
-    return result;
+    return buffer;
 }
 
 
 char *
 str_to_title_case(char str[])
 {
-    int i = 0;
-    bool is_new_word = true;
-    char *result;
-    result = malloc(sizeof(char) * strlen(str) + 1);
+    unsigned int i;
+    size_t str_len = strlen(str);
 
-    while (str[i]) {
-        if (is_new_word == true) {
-            result[i] = toupper(str[i]);
-            is_new_word = false;
-        } else {
-            if (str[i] == ' ') {
-                is_new_word = true;
-                ++i;
-                continue;
-            } else {
-                result[i] = tolower(str[i]);
-            }
-        }
-        ++i;
+    char *buffer;
+    buffer = malloc(sizeof(char) * str_len + 1);
+
+    for (i = 0; i < str_len; ++i) {
+        if (i == 0 || buffer[i - 1] == ' ')
+            buffer[i] = toupper(str[i]);
+        else
+            buffer[i] = tolower(str[i]);
+
     }
+    buffer[i + 1] = '\0';
 
-    return result;
+    return buffer;
 }
 
 
 char *
 str_to_capitalize_case(char str[])
 {
-    int i = 0;
-    char *result;
-    result = malloc(sizeof(char) * strlen(str) + 1);
+    unsigned int i = 0;
+    char *buffer;
+    buffer = malloc(sizeof(char) * strlen(str) + 1);
 
-    while (str[i]) {
-        if (i > 0) {
-            result[i] = tolower(str[i]);
-        } else {
-            result[i] = toupper(str[i]);
-        }
+    while (str[i] != '\0') {
+        if (i > 0)
+            buffer[i] = tolower(str[i]);
+        else
+            buffer[i] = toupper(str[i]);
         ++i;
     }
+    buffer[i + 1] = '\0';
 
-    return result;
+    return buffer;
 }
 
 
 char *
 str_to_swap_case(char str[])
 {
-    int i = 0;
-    char *result;
-    result = malloc(sizeof(char) * strlen(str) + 1);
+    unsigned int i = 0;
+    char *buffer;
+    buffer = malloc(sizeof(char) * strlen(str) + 1);
 
-    do {
-        if (isupper(str[i]) != 0) {
-            result[i] = tolower(str[i]);
-        } else if (islower(str[i]) != 0) {
-            result[i] = toupper(str[i]);
-        }
+    while (str[i] != '\0') {
+        if (isupper(str[i]) != 0)
+            buffer[i] = tolower(str[i]);
+        else if (islower(str[i]) != 0)
+            buffer[i] = toupper(str[i]);
+        else
+            buffer[i] = str[i];
         ++i;
-    } while (str[i] != '\0');
+    }
+    buffer[i + 1] = '\0';
 
-    return result;
+    return buffer;
 }
 
 
@@ -159,19 +161,19 @@ char *
 str_to_camel_case(char str[])
 {
     int i = 0;
-    char *result;
-    result = malloc(sizeof(char) * strlen(str) + 1);
+    char *buffer;
+    buffer = malloc(sizeof(char) * strlen(str) + 1);
 
     while (str[i] != '\0') {
-        if (i % 2 == 0) {
-            result[i] = tolower(str[i]);
-        } else {
-            result[i] = toupper(str[i]);
-        }
+        if (i % 2 == 0)
+            buffer[i] = tolower(str[i]);
+        else
+            buffer[i] = toupper(str[i]);
         ++i;
     }
+    buffer[i + 1] = '\0';
 
-    return result;
+    return buffer;
 }
 
 
@@ -180,9 +182,8 @@ str_startswith(char str[], char prefix[])
 {
     size_t prefix_len = strlen(prefix);
 
-    if (strlen(str) >= prefix_len) {
+    if (strlen(str) >= prefix_len)
         return 0 == strncmp(str, prefix, prefix_len);
-    }
     return false;
 }
 
@@ -192,107 +193,177 @@ str_endswith(char str[], char ending[])
 {
     size_t ending_len = strlen(ending);
     size_t str_len = strlen(str);
-    if (str_len >= ending_len) {
+
+    if (str_len >= ending_len)
         return 0 == strncmp(str + (str_len - ending_len), ending, ending_len);
-    }
     return false;
+}
+
+
+/**
+ * Returns a sting "str" centered in string of a length width "new_length".
+ * Padding is done using the specified fill character "placeholder".
+ */
+char *
+str_center(char str[], unsigned int new_length, char placeholder)
+{
+    size_t str_length = strlen(str);
+
+    // if a new length is less or equal length of the original string, returns the original string
+    if (new_length <= str_length)
+        return str;
+
+    char *buffer;
+    unsigned int i, total_rest_length;
+
+    buffer = malloc(sizeof(char) * new_length);
+
+    // length of a wrapper of the original string
+    total_rest_length = new_length - str_length;
+
+    // write a prefix to buffer
+    i = 0;
+    while (i < (total_rest_length / 2)) {
+        buffer[i] = placeholder;
+        ++i;
+    }
+    buffer[i + 1] = '\0';
+
+    // write the original string
+    strcat(buffer, str);
+
+    // write a postfix to the buffer
+    i += str_length;
+    while (i < new_length) {
+        buffer[i] = placeholder;
+        ++i;
+    }
+    buffer[i + 1] = '\0';
+
+    return buffer;
 }
 
 
 bool
 str_is_alpha(char str[])
 {
-    return false;
+    unsigned int i = 0;
+
+    if (str[i] == '\0')
+        return false;
+
+    while (str[i] != '\0') {
+        if (isalpha(str[i]) == 0) {
+            return false;
+        }
+        ++i;
+    }
+    return true;
 }
 
 
 bool
 str_is_alnum(char str[])
 {
-    return false;
+    unsigned int i = 0;
+
+    if (str[i] == '\0')
+        return false;
+
+    while (str[i] != '\0') {
+        if (isalnum(str[i]) == 0) {
+            return false;
+        }
+        ++i;
+    }
+    return true;
 }
 
 
 bool
 str_is_digit(char str[])
 {
-    return false;
+    unsigned int i = 0;
+
+    if (str[i] == '\0')
+        return false;
+
+    while (str[i] != '\0') {
+        if (isdigit(str[i]) == 0) {
+            return false;
+        }
+        ++i;
+    }
+    return true;
 }
 
 
 bool
 str_is_lower_case(char str[])
 {
-    return false;
+    unsigned int i = 0;
+
+    if (str[i] == '\0')
+        return false;
+
+    bool has_at_least_single_char_in_lower_case = false;
+
+    while (str[i] != '\0') {
+        if (isupper(str[i]) != 0)
+            return false;
+        else if (islower(str[i]) != 0)
+            has_at_least_single_char_in_lower_case = true;
+        ++i;
+    }
+
+    return has_at_least_single_char_in_lower_case;
 }
 
 
 bool
 str_is_upper_case(char str[])
 {
-    return false;
-}
+    unsigned int i = 0;
 
+    if (str[i] == '\0')
+        return false;
 
-bool
-str_is_title_case(char str[])
-{
-    return false;
-}
+    bool has_at_least_single_char_in_upper_case = false;
 
+    while (str[i] != '\0') {
+        if (islower(str[i]) != 0)
+            return false;
+        else if (isupper(str[i]) != 0)
+            has_at_least_single_char_in_upper_case = true;
+        ++i;
+    }
 
-bool
-str_is_camel_case(char str[])
-{
-    return false;
-}
-
-
-bool
-str_is_capitalize_case(char str[])
-{
-    return false;
-}
-
-
-
-bool
-str_is_numeric(char str[])
-{
-    return false;
+    return has_at_least_single_char_in_upper_case;
 }
 
 
 // Uncompleted
-char *
-str_center(char str[], unsigned int new_length, char placeholder)
+bool
+str_is_title_case(char str[])
 {
-    size_t str_length = strlen(str);
+    unsigned int i = 0;
 
-    if (new_length <= str_length)
-        return str;
+    if (str[i] == '\0')
+        return false;
+/*
+    bool new_word = false;
 
-    char *buffer, *left_part, *right_part;
-    unsigned int total_rest_length, left_length, right_length;
+    while (str[i] != '\0') {
+        if (isupper(str[i]) != 0) {
+            new_word = true;
+            return false;
+        } else if (islower(str[i]) != 0) {
 
-    buffer = malloc(sizeof(char) * new_length);
-
-    total_rest_length = new_length - str_length;
-
-    if (total_rest_length % 2 == 0) {
-        left_length = right_length = total_rest_length / 2;
-    } else {
-        left_length = right_length = total_rest_length / 2;
+        }
+        ++i;
     }
-
-    float v = 11;
-    printf("%f\n", 1 / 2);
-
-    // sprintf(buffer, "%s%s%s", left_part, str, right_part);
-    // free(left_part);
-    // free(right_part);
-
-    return "buffer";
+*/
+    return false;
 }
 
 
@@ -308,7 +379,7 @@ str_reverse(char string[])
 
 
 int
-slice_string(char *str, const unsigned int slice_from, const unsigned int slice_to)
+str_slice(char *str, const unsigned int slice_from, const unsigned int slice_to)
 {
 
     unsigned int slice_to_copy = slice_to;
@@ -335,74 +406,24 @@ slice_string(char *str, const unsigned int slice_from, const unsigned int slice_
 }
 
 
-char *_copy_text_for_split;
-char *
-split_string(char *text, char *delimiter)
+char **
+str_split(char *text, char *delimiter, unsigned int *length)
 {
 
-    if (strcmp(delimiter, "") == 0) return NULL;
+    if (strcmp(delimiter, "") == 0)
+        return NULL;
 
-    size_t len_delimiter = strlen(delimiter);
-    char *token;
-    size_t length_token;
+    char **result;
+    result = malloc(sizeof(char) * 10);
 
-    if (text != NULL) {
-
-        _copy_text_for_split = calloc(strlen(text), sizeof(char));
-        strcpy(_copy_text_for_split, text);
-
-        _copy_text_for_split = strpbrk(_copy_text_for_split, delimiter);
-
-        if (_copy_text_for_split == NULL) return text;
-
-        length_token = strlen(text) - strlen(_copy_text_for_split);
-
-        token = calloc(length_token, sizeof(char));
-
-        strncpy(token, text, length_token);
-
-        _copy_text_for_split += len_delimiter;
-
-        return token;
-
-    }
-
-    if (_copy_text_for_split == NULL) return NULL;
-
-    size_t _copy_text_length = strlen(_copy_text_for_split);
-    char *temp;
-    temp = calloc(_copy_text_length, sizeof(char));
-    temp = strpbrk(_copy_text_for_split, delimiter);
-
-
-    if (temp != NULL) {
-
-        size_t temp_len = strlen(temp);
-
-        length_token = _copy_text_length - temp_len;
-
-        token = calloc(length_token, sizeof(char));
-
-        strncpy(token, _copy_text_for_split, length_token);
-
-        _copy_text_for_split = _copy_text_for_split + length_token + len_delimiter;
-
-    } else {
-
-        token = calloc(strlen(_copy_text_for_split), sizeof(char));
-        strcpy(token, _copy_text_for_split);
-        _copy_text_for_split = NULL;
-
-    }
-
-    return token;
+    return result;
 };
 
 
 int
-index_of_string(const char *str, const char *substr, char direction)
+str_index(const char *str, const char *substr, enum str_direction_t direction)
 {
-
+    /*
     if (direction == 'l' || direction == 'r') {
 
         size_t str_len = strlen(str);
@@ -427,12 +448,13 @@ index_of_string(const char *str, const char *substr, char direction)
             return latest_index;
         }
     }
+    */
     return -2;
 }
 
 
 unsigned int
-count_substr_of_string(char *str, char *substr)
+str_count(char *str, char *substr)
 {
 
     size_t str_len = strlen(str);
@@ -455,9 +477,9 @@ count_substr_of_string(char *str, char *substr)
  * Strip string from left, right or both.
  */
 int
-strip_string(char *str, char *substr, char action)
+str_strip(char *str, char *substr, char action)
 {
-
+/*
     const char allowed_action[4] = "blr";
     const size_t str_len = strlen(str);
     const char temp[2] = {action, '\0'};
@@ -489,15 +511,15 @@ strip_string(char *str, char *substr, char action)
     }
 
     slice_string(str, shift_from_left, str_len - shift_from_right);
-
+*/
     return 0;
 }
 
 
 int
-replace_substr_of_string(char *str, char *substr_from, char *substr_to)
+str_replace(char *str, char *substr_from, char *substr_to, unsigned int count)
 {
-
+/*
     size_t str_len = strlen(str);
     size_t substr_from_len = strlen(substr_from);
     size_t substr_to_len = strlen(substr_to);
@@ -534,7 +556,7 @@ replace_substr_of_string(char *str, char *substr_from, char *substr_to)
 
     free(shift);
     free(buffer);
-
+*/
     return 0;
 }
 
@@ -605,9 +627,6 @@ escape_string(char *str)
 }
 
 
-/*
-    Not implemented
-*/
 int
 unescape_string(char *str)
 {
@@ -677,20 +696,20 @@ unescape_string(char *str)
 
 
 int
-truncate_chars_string()
+str_truncate_chars()
 {
     return 0;
 }
 
 int
-truncate_words_string()
+str_truncate_words()
 {
     return 0;
 }
 
 
 int
-partition_string()
+str_partition()
 {
     return 0;
 }
@@ -708,10 +727,17 @@ str_repeat(char str[], unsigned int times)
     size_t str_len = strlen(str);
     result = malloc(sizeof(char) * str_len + 1);
 
-    while (times--) {
+    while (times--)
         strcat(result, str);
-    }
+
     return result;
+}
+
+
+char *
+str_concatenate(int count, ...)
+{
+    return NULL;
 }
 
 
@@ -748,13 +774,294 @@ test_str_to_title_case()
     assertStringEquals(str_to_title_case(" test XTES"), " Test Xtes");
     assertStringEquals(str_to_title_case(""), "");
     assertStringEquals(str_to_title_case("A123a"), "A123a");
+    assertStringEquals(str_to_title_case("ar das assdr !sas _text b"), "Ar Das Assdr !sas _text B");
 }
 
 
 void
-test_start_end_swith()
+test_str_to_capitalize_case()
 {
+    assertStringEquals(str_to_capitalize_case("some text is good"), "Some text is good");
+    assertStringEquals(str_to_capitalize_case(" adc is rtoar"), " adc is rtoar");
+    assertStringEquals(str_to_capitalize_case("vera"), "Vera");
+    assertStringEquals(str_to_capitalize_case("_itil"), "_itil");
+    assertStringEquals(str_to_capitalize_case("1code"), "1code");
+    assertStringEquals(str_to_capitalize_case(""), "");
+}
 
+
+void
+test_str_to_swap_case()
+{
+    assertStringEquals(str_to_swap_case("Math is simple and FUN "), "mATH IS SIMPLE AND fun ");
+    assertStringEquals(str_to_swap_case("Built-in Types"), "bUILT-IN tYPES");
+    assertStringEquals(str_to_swap_case(""), "");
+    assertStringEquals(str_to_swap_case(" OR THE SLIGHTLY FUNCTION)"), " or the slightly function)");
+    assertStringEquals(str_to_swap_case("Truth Value Testing"), "tRUTH vALUE tESTING");
+    assertStringEquals(str_to_swap_case("collection classes are mutable."), "COLLECTION CLASSES ARE MUTABLE.");
+}
+
+
+void
+test_str_to_camel_case()
+{
+    assertStringEquals(str_to_camel_case("zero of any numeric type"), "zErO Of aNy nUmErIc tYpE")
+    assertStringEquals(str_to_camel_case(""), "")
+    assertStringEquals(str_to_camel_case("A"), "a")
+    assertStringEquals(str_to_camel_case("Xx"), "xX")
+    assertStringEquals(str_to_camel_case("123"), "123")
+    assertStringEquals(str_to_camel_case("built-in functions that"), "bUiLt-iN FuNcTiOnS ThAt")
+    assertStringEquals(str_to_camel_case(" built-in functions that  "), " BuIlT-In fUnCtIoNs tHaT  ")
+    assertStringEquals(str_to_camel_case("  built-in functions that  "), "  bUiLt-iN FuNcTiOnS ThAt  ")
+}
+
+
+void
+test_str_startswith()
+{
+    assertFalse(str_startswith("", " "));
+    assertTrue(str_startswith(" ", " "));
+    assertTrue(str_startswith("simple.txt", "s"));
+    assertTrue(str_startswith("simple.txt", "si"));
+    assertTrue(str_startswith("simple.txt", "sim"));
+    assertTrue(str_startswith("simple.txt", "simp"));
+    assertTrue(str_startswith("simple.txt", "simpl"));
+    assertTrue(str_startswith("simple.txt", "simple"));
+    assertTrue(str_startswith("simple.txt", "simple."));
+    assertTrue(str_startswith("simple.txt", "simple.t"));
+    assertTrue(str_startswith("simple.txt", "simple.tx"));
+    assertTrue(str_startswith("simple.txt", "simple.txt"));
+    assertFalse(str_startswith("simple.txt", "simple.txt "));
+    assertFalse(str_startswith("simple.txt", "imp"));
+}
+
+
+void
+test_str_endswith()
+{
+    assertTrue(str_endswith("simple.txt", "txt"));
+    assertFalse(str_endswith("simple.txt", "text"));
+    assertTrue(str_endswith("", ""));
+    assertTrue(str_endswith(" ", " "));
+    assertFalse(str_endswith(" !", " "));
+    assertTrue(str_endswith(" !", " !"));
+    assertTrue(str_endswith("A", "A"));
+    assertFalse(str_endswith("image.jpeg", "jpg"));
+    assertTrue(str_endswith("image.jpeg", ""));
+    assertTrue(str_endswith("image.jpeg", "g"));
+    assertTrue(str_endswith("image.jpeg", "eg"));
+    assertTrue(str_endswith("image.jpeg", "peg"));
+    assertTrue(str_endswith("image.jpeg", "jpeg"));
+    assertTrue(str_endswith("image.jpeg", ".jpeg"));
+    assertTrue(str_endswith("image.jpeg", "e.jpeg"));
+    assertTrue(str_endswith("image.jpeg", "ge.jpeg"));
+    assertTrue(str_endswith("image.jpeg", "age.jpeg"));
+    assertTrue(str_endswith("image.jpeg", "mage.jpeg"));
+    assertTrue(str_endswith("image.jpeg", "image.jpeg"));
+
+}
+
+
+void
+test_str_center()
+{
+    assertStringEquals(str_center("abc", 0, '*'), "abc");
+    assertStringEquals(str_center("abc", 1, '*'), "abc");
+    assertStringEquals(str_center("abc", 2, '*'), "abc");
+    assertStringEquals(str_center("abc", 3, '*'), "abc");
+    assertStringEquals(str_center("abc", 4, '*'), "abc*");
+    assertStringEquals(str_center("abc", 5, '*'), "*abc*");
+    assertStringEquals(str_center("abc", 6, '*'), "*abc**");
+    assertStringEquals(str_center("abc", 7, '*'), "**abc**");
+    assertStringEquals(str_center("", 7, '-'), "-------");
+    assertStringEquals(str_center("1", 10, '!'), "!!!!1!!!!!");
+    assertStringEquals(str_center("simple text", 10, '&'), "simple text");
+    assertStringEquals(str_center("simple text", 15, '&'), "&&simple text&&");
+    assertStringEquals(str_center("A", 0, '-'), "A");
+    assertStringEquals(str_center("A", 1, '-'), "A");
+    assertStringEquals(str_center("A", 10, '-'), "----A-----");
+    assertStringEquals(str_center("text", 10, '*'), "***text***");
+    assertStringEquals(str_center("The C programming language", 26, '!'), "The C programming language");
+    assertStringEquals(str_center("The C programming language", 27, '!'), "The C programming language!");
+    assertStringEquals(str_center("The C programming language", 28, '!'), "!The C programming language!");
+    assertStringEquals(str_center("The C programming language", 29, '!'), "!The C programming language!!");
+    assertStringEquals(str_center("The C programming language", 30, '!'), "!!The C programming language!!");
+    assertStringEquals(str_center("The C programming language", 31, '!'), "!!The C programming language!!!");
+}
+
+
+void
+test_str_is_alpha()
+{
+    assertFalse(str_is_alpha("1"));
+    assertFalse(str_is_alpha("1a"));
+    assertFalse(str_is_alpha("1 "));
+    assertFalse(str_is_alpha("a "));
+    assertFalse(str_is_alpha("1231 3123 23 1312"));
+    assertFalse(str_is_alpha("123131231312"));
+    assertFalse(str_is_alpha("sasa as asas "));
+    assertTrue(str_is_alpha("sasaasasas"));
+    assertFalse(str_is_alpha("sasa_asasas"));
+    assertTrue(str_is_alpha("sad"));
+    assertTrue(str_is_alpha("S"));
+    assertTrue(str_is_alpha("s"));
+    assertTrue(str_is_alpha("text"));
+    assertTrue(str_is_alpha("TEXT"));
+    assertFalse(str_is_alpha("TEXT "));
+    assertFalse(str_is_alpha("S!"));
+    assertFalse(str_is_alpha("!S"));
+    assertFalse(str_is_alpha("sss?"));
+    assertFalse(str_is_alpha(""));
+    assertFalse(str_is_alpha("a-a"));
+    assertFalse(str_is_alpha("a2a"));
+
+}
+
+
+void
+test_str_is_alnum()
+{
+    assertTrue(str_is_alnum("1"));
+    assertTrue(str_is_alnum("1a"));
+    assertFalse(str_is_alnum("1 "));
+    assertFalse(str_is_alnum("a "));
+    assertFalse(str_is_alnum("1231 3123 23 1312"));
+    assertTrue(str_is_alnum("123131231312"));
+    assertFalse(str_is_alnum("sasa as asas "));
+    assertTrue(str_is_alnum("sasaasasas"));
+    assertFalse(str_is_alnum("sasa_asasas"));
+    assertTrue(str_is_alnum("sad"));
+    assertTrue(str_is_alnum("S"));
+    assertTrue(str_is_alnum("s"));
+    assertTrue(str_is_alnum("text"));
+    assertTrue(str_is_alnum("TEXT"));
+    assertFalse(str_is_alnum("TEXT "));
+    assertFalse(str_is_alnum("S!"));
+    assertFalse(str_is_alnum("!S"));
+    assertFalse(str_is_alnum("sss?"));
+    assertFalse(str_is_alnum(""));
+    assertFalse(str_is_alnum("a-a"));
+    assertTrue(str_is_alnum("a2a"));
+
+}
+
+
+void
+test_str_is_digit()
+{
+    assertFalse(str_is_digit("1a"));
+    assertFalse(str_is_digit("1 "));
+    assertFalse(str_is_digit("a "));
+    assertFalse(str_is_digit("1231 3123 23 1312"));
+    assertTrue(str_is_digit("123131231312"));
+    assertFalse(str_is_digit("sasa as asas "));
+    assertFalse(str_is_digit("sasaasasas"));
+    assertFalse(str_is_digit("sasa_asasas"));
+    assertFalse(str_is_digit("sad"));
+    assertFalse(str_is_digit("S"));
+    assertFalse(str_is_digit("s"));
+    assertFalse(str_is_digit("text"));
+    assertFalse(str_is_digit("TEXT"));
+    assertFalse(str_is_digit("TEXT "));
+    assertFalse(str_is_digit("S!"));
+    assertFalse(str_is_digit("!S"));
+    assertFalse(str_is_digit("sss?"));
+    assertFalse(str_is_digit(""));
+    assertFalse(str_is_digit("a-a"));
+    assertFalse(str_is_digit("a2a"));
+    assertTrue(str_is_digit("0"));
+    assertTrue(str_is_digit("1"));
+    assertTrue(str_is_digit("2"));
+    assertTrue(str_is_digit("3"));
+    assertTrue(str_is_digit("4"));
+    assertTrue(str_is_digit("5"));
+    assertTrue(str_is_digit("6"));
+    assertTrue(str_is_digit("7"));
+    assertTrue(str_is_digit("8"));
+    assertTrue(str_is_digit("9"));
+    assertTrue(str_is_digit("10"));
+    assertFalse(str_is_digit("-1"));
+    assertFalse(str_is_digit("-10"));
+    assertFalse(str_is_digit("-"));
+    assertFalse(str_is_digit("2321.1232"));
+    assertFalse(str_is_digit(".00000001"));
+    assertFalse(str_is_digit("-1.1"));
+    assertFalse(str_is_digit("1.1"));
+    assertFalse(str_is_digit("0.1"));
+    assertFalse(str_is_digit("-0.1"));
+    assertFalse(str_is_digit("0.0"));
+    assertFalse(str_is_digit("0."));
+    assertTrue(str_is_digit("10000000000000"));
+    assertFalse(str_is_digit("-10000000000000"));
+}
+
+
+void
+test_str_is_lower_case()
+{
+    assertTrue(str_is_lower_case("asd sd sad sdas!@&@#@1231"));
+    assertTrue(str_is_lower_case("text"));
+    assertFalse(str_is_lower_case("texT"));
+    assertTrue(str_is_lower_case("text "));
+    assertFalse(str_is_lower_case(" A text.1$@^&()!Z"));
+    assertFalse(str_is_lower_case(" .1$@^&()!"));
+    assertFalse(str_is_lower_case("asd sd sAd sdas!@&@#@1231"));
+    assertFalse(str_is_lower_case("@&@#@1231"));
+    assertFalse(str_is_lower_case(""));
+    assertFalse(str_is_lower_case(" "));
+    assertFalse(str_is_lower_case("     "));
+    assertFalse(str_is_lower_case("$"));
+    assertFalse(str_is_lower_case("@12312"));
+    assertFalse(str_is_lower_case(".12312"));
+    assertFalse(str_is_lower_case("\" 32434"));
+    assertFalse(str_is_lower_case("A"));
+    assertTrue(str_is_lower_case("a"));
+}
+
+
+void
+test_str_is_upper_case()
+{
+    assertFalse(str_is_upper_case("asd sd sad sdas!@&@#@1231"));
+    assertTrue(str_is_upper_case("ASD SD SAD SDAS!@&@#@1231"));
+    assertFalse(str_is_upper_case("text"));
+    assertFalse(str_is_upper_case("texT"));
+    assertTrue(str_is_upper_case("TEXT "));
+    assertFalse(str_is_upper_case(" A text.1$@^&()!Z"));
+    assertFalse(str_is_upper_case(" .1$@^&()!"));
+    assertFalse(str_is_upper_case("asd sd sAd sdas!@&@#@1231"));
+    assertFalse(str_is_upper_case("@&@#@1231"));
+    assertFalse(str_is_upper_case(""));
+    assertFalse(str_is_upper_case(" "));
+    assertFalse(str_is_upper_case("     "));
+    assertFalse(str_is_upper_case("$"));
+    assertFalse(str_is_upper_case("@12312"));
+    assertFalse(str_is_upper_case(".12312"));
+    assertFalse(str_is_upper_case("\" 32434"));
+    assertTrue(str_is_upper_case("A"));
+    assertFalse(str_is_upper_case("a"));
+}
+
+
+void
+test_str_is_title_case()
+{
+    assertTrue(str_is_title_case("A"));
+    assertFalse(str_is_title_case("a"));
+    assertFalse(str_is_title_case(""));
+    assertTrue(str_is_title_case(" A"));
+    assertFalse(str_is_title_case(" a"));
+    assertFalse(str_is_title_case("aA"));
+    assertTrue(str_is_title_case("A A"));
+    assertFalse(str_is_title_case("\n"));
+    assertTrue(str_is_title_case("A Titlecased Line"));
+    assertTrue(str_is_title_case("A\nTitlecased Line"));
+    assertTrue(str_is_title_case("A Titlecased, Line"));
+    assertFalse(str_is_title_case("Not a capitalized String"));
+    assertFalse(str_is_title_case("Not\ta Titlecase String"));
+    assertFalse(str_is_title_case("Not--a Titlecase String"));
+    assertFalse(str_is_title_case("NOT"));
+    assertFalse(str_is_title_case("abc"));
 }
 
 
@@ -764,8 +1071,18 @@ test_str()
     test_str_to_upper_case();
     test_str_to_lower_case();
     test_str_to_title_case();
-
-    puts(str_center("AC", 50, '*'));
+    test_str_to_capitalize_case();
+    test_str_to_swap_case();
+    test_str_to_camel_case();
+    test_str_startswith();
+    test_str_endswith();
+    test_str_center();
+    test_str_is_alpha();
+    test_str_is_alnum();
+    test_str_is_digit();
+    test_str_is_lower_case();
+    test_str_is_upper_case();
+    test_str_is_title_case();
 }
 
 

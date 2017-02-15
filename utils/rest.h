@@ -1,3 +1,3 @@
 /**
- * RESTFull support
+ * Web RESTFull support
  */

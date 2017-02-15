@@ -16,12 +16,6 @@
 #include <errno.h>
 
 
-#ifdef TESTING_DISPLAY_ALL
-    #undef TESTING_DISPLAY_ALL
-    #define TESTING_DISPLAY_ALL
-#endif
-
-
 #include "./str.h"
 #include "./func.h"
 #include "./testing/unittest.h"
@@ -57,6 +51,22 @@ random_boolean()
 }
 
 
+void
+random_int_array(int array[], const unsigned int length, const int min, const int max)
+{
+    for (int i = 0; i < length; ++i)
+        array[i] = random_integer(min, max);
+}
+
+
+void
+random_float_array(float array[], const unsigned int length, const float min, const float max)
+{
+    for (int i = 0; i < length; ++i)
+        array[i] = random_float(min, max);
+}
+
+
 char
 random_choice_from_str(char str[])
 {
@@ -70,13 +80,7 @@ random_choice_from_str(char str[])
 }
 
 
-bool
-random_int_array(int array[], const size_t length, const int min, const int max)
-{
-    for (int i = 0; i < length; ++i)
-        array[i] = random_integer(min, max);
-    return true;
-}
+#define random_choice_from_array(array, length, value) (*value = array[random_integer(0, length)])
 
 
 char *
@@ -118,6 +122,9 @@ random_shuffle_array(void *array, const size_t length)
 
     return 0;
 }
+
+
+// random_sample_array(array, length, count)
 
 
 char
@@ -185,47 +192,22 @@ random_charfromstring(char *str)
 void
 test_random_integer()
 {
-    int value;
-
-    value = random_integer(1, 10);
-    assertInRange(value, 1, 10);
-
-    value = random_integer(-10000, 100000);
-    assertInRange(value, -10000, 100000);
-
-    value = random_integer(-100, -100);
-    assertEquals(value, -100);
-
-    value = random_integer(-1, 0);
-    assertInRange(value, -1, 0);
+    assertInRange(random_integer(1, 10), 1, 10);
+    assertInRange(random_integer(-10000, 100000), -10000, 100000);
+    assertEquals(random_integer(-100, -100), -100);
+    assertInRange(random_integer(-1, 0), -1, 0);
 }
 
 
 void
 test_random_float()
 {
-    float value;
-
-    value = random_float(1, 10);
-    assertInRange(value, 1, 10);
-
-    value = random_float(-100000, 100000);
-    assertInRange(value, -100000, 100000);
-
-    value = random_float(-1, 1);
-    assertInRange(value, -1, 1);
-
-    value = random_float(-0.5, -0.25);
-    assertInRange(value, -0.5, -0.25);
-
-    value = random_float(0.668, 0.668);
-    assertEquals(value, 0.668);
-
-    value = random_float(-0.0007, -0.0006);
-    assertInRange(value, -0.0007, -0.0006);
-
-    value = random_float(0.99, 0.5);
-    assertEquals(value, 0);
+    assertInRange(random_float(1, 10), 1, 10);
+    assertInRange(random_float(-100000, 100000), -100000, 100000);
+    assertInRange(random_float(-1, 1), -1, 1);
+    assertInRange(random_float(-0.5, -0.25), -0.5, -0.25);
+    assertEquals(random_float(0.668, 0.668), 0.668);
+    assertInRange(random_float(-0.0007, -0.0006), -0.0007, -0.0006);
 }
 
 
@@ -269,20 +251,66 @@ test_random_int_array()
 }
 
 
+
+void
+test_random_float_array()
+{
+    float array1[10];
+    random_float_array(array1, 10, -1.75, 1.15);
+    for (int i = 0; i < 10; ++i)
+        assertInRange(array1[i], -1.75, 1.15);
+
+    float array2[17];
+    random_float_array(array2, 17, -1121.4141, 3412.121);
+    for (int i = 0; i < 17; ++i)
+        assertInRange(array2[i], -1121.4141, 3412.121);
+
+    float array3[100];
+    random_float_array(array3, 100, -100000, 100000);
+    for (int i = 0; i < 100; ++i)
+        assertInRange(array3[i], -100000, 100000);
+
+    float array4[1];
+    random_float_array(array4, 1, -0.1, 0.1);
+    assertInRange(array4[0], -0.1, 0.1);
+
+    float array5[5];
+    random_float_array(array5, 5, -78974.7, -78974.7);
+    for (int i = 0; i < 5; ++i)
+        // printf("%f\n", array5[i]);
+        assertEquals(array5[i], -78974.787);
+}
+
+
 void
 test_random_choice_from_str()
 {
     char chr;
+
     chr = random_choice_from_str("abcd");
     assertTrue((chr == 'a' || chr == 'b' || chr == 'c' || chr == 'd'));
 
     chr = random_choice_from_str("j s o n.h ");
-    assertTrue((chr == ' ' || chr == 's' || chr == 'o' || chr == 'n' || chr == '.' || chr == 'h' || chr == ' '));
+    assertTrue((chr == 'j' || chr == 's' || chr == 'o' || chr == 'n' || chr == '.' || chr == 'h' || chr == ' '));
 
     assertEquals(random_choice_from_str("zzzzz"), 'z');
     assertEquals(random_choice_from_str(" "), ' ');
     assertEquals(random_choice_from_str(""), '\0');
-    assertEquals(random_choice_from_str("T"), 'T');
+    assertEquals(random_choice_from_str("1"), '1');
+
+    chr = random_choice_from_str("\t\b\n\a\v");
+    assertTrue((chr == '\t' || chr == '\b' || chr == '\n' || chr == '\a' || chr == '\v'));
+}
+
+
+void
+test_random_choice_from_array()
+{
+
+    float arr[5], value;
+    random_float_array(arr, 5, -1.5, 5.25);
+    random_choice_from_array(arr, 5, &value);
+    // printf("%f\n", value);
 }
 
 
@@ -330,12 +358,13 @@ test_random()
 {
     srand(time(NULL));
 
-    // test_random_integer();
+    test_random_integer();
     // test_random_float();
-    // test_random_boolean();
-    // test_random_int_array();
-    // test_random_word();
+    test_random_boolean();
+    test_random_int_array();
+    // test_random_float_array();
     test_random_choice_from_str();
+    test_random_choice_from_array();
     test_random_word();
 
 }

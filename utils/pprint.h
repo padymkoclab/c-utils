@@ -16,8 +16,7 @@
 extern int errno;
 
 
-// print items of an array by a format
-#define PRINT_ARRAY(array, length, format) \
+#define ARRAY_PRINT(array, length, format) \
 { \
     putchar('['); \
     for (size_t i = 0; i < length; ++i) { \

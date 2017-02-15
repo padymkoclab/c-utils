@@ -21,13 +21,9 @@ typedef struct _CounterWords {
 
 
 
-/*
-    Return count words in text
- */
-// Rewrite it FIXME!!!
-static char *_copy_text_for_words;
-char *
-count_words(char text[])
+// Need rewrite
+char **
+text_get_words(char text[], unsigned int *length)
 {
 
     char *word;
@@ -49,25 +45,19 @@ count_words(char text[])
 
 
 unsigned int
-getCountWords(char *str) {
-
-    char *word = getWords(str);
-
-    unsigned int count = 0;
-    while (word != NULL) {
-        word = getWords(NULL);
-        ++count;
-    }
-
-    return count;
+text_get_count_words(char text[])
+{
+    unsigned int length;
+    text_get_words(text, &length);
+    return length;
 }
 
 
-static int
-counter_words(CounterWords *counter_words, char *text)
+// Need mapping (dictionary)
+char **
+counter_words(CounterWords *counter_words, char text[])
 {
-    // need fill dictionary
-    return 0;
+    return NULL;
 }
 
 
@@ -85,10 +75,10 @@ Joel
 is a
 slug
  */
-static int
+char *
 wordwrap(char text[], const unsigned int width)
 {
-    return 0;
+    return NULL;
 }
 
 

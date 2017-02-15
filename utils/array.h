@@ -9,34 +9,36 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <stdbool.h>
 
+#ifdef TESTING_DISPLAY_ALL
+    #undef TESTING_DISPLAY_ALL
+    #define TESTING_DISPLAY_ALL 1
+#endif
+
+
+#include "testing/unittest.h"
 #include "func.h"
-
-
-// for processing errors
-extern int errno;
+#include "pprint.h"
 
 
 // determination size of an array (not from a pointer on this array)
-#define SIZE_ARRAY(array) (sizeof(array) / sizeof(array[0]))
+#define array_size(array) (sizeof(array) / sizeof(array[0]))
 
 // a minimal value in an array
-#define MIN_ARRAY(array, length, variable, status) \
+#define array_min(array, length, variable) \
 {\
     if (length > 0) { \
         variable = array[0]; \
-        for (int i = 1; i < length; ++i) \
-            if (array[i] < variable) variable = array[i]; \
-        status = 0; \
+        for (int i = 1; i < length; ++i) { \
+            if (array[i] < variable) \
+                variable = array[i]; \
+        } \
     } \
-    else if (length == 0) status = 1; \
-    else status = -1; \
 }
 
 // a maximal value in an array
-#define MAX_ARRAY(array, length, variable, status) \
+#define array_max(array, length, variable) \
 {\
     if (length > 0) { \
         variable = array[0]; \
@@ -51,7 +53,7 @@ extern int errno;
 // determination sum of items of an array
 // after processing variable status will be changed to:
 // -1, 0, 1
-#define SUM_ARRAY(array, length, variable, status) \
+#define array_sum(array, length, variable) \
 {\
     if (length > 0) \
         for (int i = 0; i < length; ++i) { \
@@ -63,7 +65,7 @@ extern int errno;
 }
 
 // reverse an array of any numberic type in place
-#define REVERSE_ARRAY(array, length, status) \
+#define array_reverse(array, length) \
 { \
     if (length > 0) { \
         for (int i = 0; i < length / 2; ++i) { \
@@ -76,11 +78,18 @@ extern int errno;
 }
 
 
-enum inter_direction_array
-{
-    LEFT_INTER_ARRAY  = 'l',
-    RIGHT_INTER_ARRAY = 'r'
-};
+// reverse an array of any numberic type in place
+#define array_shuffle(array, length)
+
+
+#define array_range(type, array, length, start, end, step) \
+{ \
+    unsigned int index = 0; \
+    for (type i = start; i < end; i += step) { \
+        array[index] = i; \
+        ++index; \
+    } \
+}
 
 
 /*
@@ -89,41 +98,10 @@ enum inter_direction_array
     Return a non-zero value, if something went wrong.
 
     SIZE OF ARRAY IS A RESPONSIBILITY OF A PROGRAMMER.
-
-    int arr1[10];
-    range_int_array(arr1, 0, 10, 1);
-    print_int_array(arr1, 10);
-
-    int arr2[10];
-    range_int_array(arr2, 0, -10, -1);
-    print_int_array(arr2, 10);
-
-    int arr3[4];
-    range_int_array(arr3, 20, 10, -3);
-    print_int_array(arr3, 4);
-
-    int arr4[5];
-    range_int_array(arr4, -20, -10, 2);
-    print_int_array(arr4, 5);
-
-    int arr5[5];
-    range_int_array(arr5, -20, -10, -5);
-    print_int_array(arr5, 5);
-
-    int arr6[5];
-    range_int_array(arr6, 20, 10, 5);
-    print_int_array(arr6, 5);
-
-    int arr7[5];
-    int result = range_int_array(arr7, 20, 10, 0);
-    if (result != 0) {
-        puts("Raised error");
-    }
-
  */
 int
-range_int_array(int array[], const int start, const int end, const int step) {
-
+array_range_int(int array[], const int start, const int end, const int step)
+{
     int value;
     int index = 0;
 
@@ -162,7 +140,8 @@ range_int_array(int array[], const int start, const int end, const int step) {
     http://stackoverflow.com/questions/4681325/join-or-implode-in-c
  */
 int
-join_array(char *str, const int array[], const size_t length) {
+array_join(char *str, const int array[], const size_t length)
+{
 
     int i;
     char *buffer;
@@ -180,7 +159,8 @@ join_array(char *str, const int array[], const size_t length) {
 
 
 int
-indef_of_array(const void *array, const size_t length, const int number, const char direction) {
+array_index_of(const void *array, const size_t length, const int number, const char direction)
+{
 
     // for (int i = 0; i < length; ++i) {
     //     if (array[i] == number) return i;
@@ -241,20 +221,21 @@ clear_array(int *array, size_t length)
     http://stackoverflow.com/questions/8766258/alternative-to-multidimensional-array-in-c
  */
 int
-flatten_array()
+flattenarray()
 {
     return 0;
 }
 
 
 int
-pop_from_array() {
+array_remove() {
     return 0;
 }
 
 
 int
-push_to_array() {
+array_insert()
+{
     return 0;
 }
 
@@ -263,8 +244,133 @@ push_to_array() {
     http://stackoverflow.com/questions/1696074/how-can-i-concatenate-two-arrays-in-c
  */
 int
-extend_array() {
+extend_array()
+{
     return 0;
+}
+
+
+/**
+ * Tests
+ */
+
+
+void
+test_array_size()
+{
+    int array1[789];
+    assertEquals(array_size(array1), 789);
+
+    long int array2[0];
+    assertEquals(array_size(array2), 0);
+
+    float array3[1];
+    assertEquals(array_size(array3), 1);
+
+    double array4[1000000];
+    assertEquals(array_size(array4), 1000000);
+}
+
+
+void
+test_array_min()
+{
+    float value_f;
+    int value_i;
+
+    float array1[1] = {0.25};
+    array_min(array1, 1, value_f)
+    assertEquals(value_f, 0.25);
+
+    float array2[5] = {0.954, -78.21, 0.25, 1, 0};
+    array_min(array2, 5, value_f)
+    assertEquals(value_f, -78.21);
+    printf("%f\n", value_f);
+
+    float array3[10] = {1, 89, -98.43, 0.954, -78.21, 0.25, 1, -98.43, 0, 0.954};
+    array_min(array3, 10, value_f)
+    assertEquals(value_f, -98.43);
+
+    float array4[5] = {789.123, 789.122, 789.126, 789.125, 789.124};
+    array_min(array4, 5, value_f)
+    assertEquals(value_f, 789.122);
+
+    int array5[5] = {189, 689, 789, 789, 124};
+    array_min(array5, 5, value_i)
+    assertEquals(value_i, 124);
+
+    int array6[5] = {-78, -98, -14, -21, -124};
+    array_min(array6, 5, value_i)
+    assertEquals(value_i, -124);
+
+    int array7[10] = {-189, -689, 789, -789, 124, 21, 78, 11, -98, 213};
+    array_min(array7, 10, value_i)
+    assertEquals(value_i, -789);
+
+    int array8[1] = {689};
+    array_min(array8, 1, value_i)
+    assertEquals(value_i, 689);
+}
+
+
+void
+test_array_max()
+{
+
+}
+
+
+void
+test_array_sum()
+{
+
+}
+
+
+void
+test_array_reverse()
+{
+
+}
+
+
+void
+test_array_shuffle()
+{
+
+}
+
+
+void
+test_array_range()
+{
+    int array1[10];
+    array_range(int, array1, 10, 0, 10, 1);
+    ARRAY_PRINT(array1, 10, "%d");
+
+    float array2[10];
+    array_range(float, array2, 10, -1, 1, 0.2);
+    ARRAY_PRINT(array2, 10, "%f");
+
+    double array3[10];
+    array_range(double, array3, 10, 0.63, 2.9, 0.25);
+    ARRAY_PRINT(array3, 10, "%g");
+
+    // PRINT_TEST_ARRAY_FAIL("AA", "AA", 1, ">", array1, array2, 10);
+
+}
+
+
+void
+test_array()
+{
+    test_array_size();
+    test_array_min();
+    test_array_max();
+    test_array_sum();
+    test_array_reverse();
+    test_array_shuffle();
+    // test_array_range();
 }
 
 

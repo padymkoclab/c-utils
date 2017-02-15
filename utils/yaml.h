@@ -1,3 +1,3 @@
 /**
- * Working with YAML
+ * Processing an YAML
  */

@@ -56,7 +56,7 @@
     if (value == true) \
         PRINT_TEST_OK(__func__, __FILE__, __LINE__) \
     else \
-        PRINT_TEST_FAIL( __func__, __FILE__, __LINE__, "is not", value1, true) \
+        PRINT_TEST_FAIL( __func__, __FILE__, __LINE__, "is not", value, true) \
 }
 
 #define assertFalse(value) \
@@ -64,7 +64,7 @@
     if (value == false) \
         PRINT_TEST_OK(__func__, __FILE__, __LINE__) \
     else \
-        PRINT_TEST_FAIL( __func__, __FILE__, __LINE__, "is not", value1, false) \
+        PRINT_TEST_FAIL( __func__, __FILE__, __LINE__, "is not", value, false) \
 }
 
 
@@ -97,7 +97,7 @@
     if (strcmp(str1, str2) == 0) \
         PRINT_TEST_OK(__func__, __FILE__, __LINE__) \
     else \
-        PRINT_TEST_FAIL(__func__, __FILE__, __LINE__, "!=", str1, str2) \
+        printf("%s (%s %d): \"%s\" != \"%s\"\n", __func__, __FILE__, __LINE__, str1, str2); \
 }
 
 #define assertStringNotEquals(str1, str2) \
@@ -105,7 +105,7 @@
     if (strcmp(str1, str2) != 0) \
         PRINT_TEST_OK(__func__, __FILE__, __LINE__) \
     else \
-        PRINT_TEST_FAIL(__func__, __FILE__, __LINE__, "==", str1, str2) \
+        printf("%s (%s %d): \"%s\" == \"%s\"\n", __func__, __FILE__, __LINE__, str1, str2); \
 }
 
 #define assertStringContaints(str, substr) \

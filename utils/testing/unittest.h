@@ -57,7 +57,6 @@
 }
 
 
-// Does not work
 #define PRINT_TEST_ARRAY_FAIL(func_name, filepath, line_number, condition, array1, array2, length) \
 { \
     fprintf( \
