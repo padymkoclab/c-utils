@@ -33,13 +33,6 @@
 #define RUSSIAN_LETTERS "АБВГДЕЁЖЗИЙКЛМНОПРТУФХЦЧШЩЫЭЮЯабвгдеёжзийклмнопрстуфхцчшщыьэюя"
 
 
-
-enum str_direction_t {
-    LEFT,
-    RIGHT,
-};
-
-
 // DOES NOT WORK
 int
 str_get_characters_by_codes_range(char *buffer, const unsigned int start_code, const unsigned int end_code)
@@ -378,50 +371,100 @@ str_reverse(char string[])
 }
 
 
-int
-str_slice(char *str, const unsigned int slice_from, const unsigned int slice_to)
+
+/**
+ * Extracts a selection of string and return a new string or NULL.
+ * It supports both negative and positive indexes.
+ */
+char *
+str_slice(char str[], int slice_from, int slice_to)
 {
-
-    unsigned int slice_to_copy = slice_to;
-
-    size_t new_len_string = slice_to_copy - slice_from;
-
-    if (slice_from < 0 || slice_to < 0 || (slice_from > slice_to)) return -1;
-
-    size_t len_string = strlen(str);
-
-    if (slice_to_copy > len_string) slice_to_copy = len_string;
+    // if a string is empty, returns nothing
+    if (str[0] == '\0')
+        return NULL;
 
     char *buffer;
-    buffer = malloc(new_len_string * sizeof(char) + 1);
+    size_t str_len, buffer_len;
 
-    memmove(str, str + slice_from, new_len_string);
+    // for negative indexes "slice_from" must be less "slice_to"
+    if (slice_to < 0 && slice_from < slice_to) {
+        str_len = strlen(str);
 
-    strncpy(buffer, str, new_len_string);
-    strcpy(str, buffer);
+        // if "slice_to" goes beyond permissible limits
+        if (abs(slice_to) > str_len - 1)
+            return NULL;
 
-    free(buffer);
+        // if "slice_from" goes beyond permissible limits
+        if (abs(slice_from) > str_len)
+            slice_from = (-1) * str_len;
 
-    return 0;
+        buffer_len = slice_to - slice_from;
+        str += (str_len + slice_from);
+
+    // for positive indexes "slice_from" must be more "slice_to"
+    } else if (slice_from >= 0 && slice_to > slice_from) {
+        str_len = strlen(str);
+
+        // if "slice_from" goes beyond permissible limits
+        if (slice_from > str_len - 1)
+            return NULL;
+
+        buffer_len = slice_to - slice_from;
+        str += slice_from;
+
+    // otherwise, returns NULL
+    } else
+        return NULL;
+
+    buffer = calloc(buffer_len, sizeof(char));
+    strncpy(buffer, str, buffer_len);
+    return buffer;
 }
 
 
+// http://stackoverflow.com/questions/9210528/split-string-with-delimiters-in-c
+// http://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
 char **
 str_split(char *text, char *delimiter, unsigned int *length)
 {
-
     if (strcmp(delimiter, "") == 0)
         return NULL;
 
-    char **result;
-    result = malloc(sizeof(char) * 10);
+    char **result, *string, *rest_text;
+    unsigned int string_len;
+    size_t delimiter_len;
+
+    *length = 1;
+    delimiter_len = strlen(delimiter);
+    result = malloc(sizeof(char) * (*length));
+
+    result = realloc(result, sizeof(char) * (*length));
+
+    printf("%s: \"%s\" -> ", text, delimiter);
+
+    while (*text != '\0') {
+        rest_text = strstr(text, delimiter);
+
+        if (rest_text == '\0') {
+            printf("\"%s\" |", text);
+            break;
+        }
+
+        string_len = strlen(text) - strlen(rest_text);
+        string = malloc(sizeof(char) * string_len);
+        strncpy(string, text, string_len);
+        printf("\"%s\" | ", string);
+        text = rest_text + delimiter_len;
+        ++(*length);
+    }
+    puts("");
 
     return result;
 };
 
 
 int
-str_index(const char *str, const char *substr, enum str_direction_t direction)
+str_index(const char *str, const char *substr)
 {
     /*
     if (direction == 'l' || direction == 'r') {
@@ -1043,6 +1086,7 @@ test_str_is_upper_case()
 }
 
 
+// Try regex
 void
 test_str_is_title_case()
 {
@@ -1066,6 +1110,88 @@ test_str_is_title_case()
 
 
 void
+test_str_split()
+{
+    unsigned int length;
+
+    char str1[] = "/.fas/.dire/.fixk/.saios/";
+    str_split(str1, "/", &length);
+    str_split(str1, ".", &length);
+    str_split(str1, "/.", &length);
+    str_split(str1, "/.f", &length);
+    str_split(str1, "i", &length);
+    str_split(str1, "**", &length);
+
+    char str2[] = "/aaa/bb/c/";
+    str_split(str2, "/", &length);
+
+    char str3[] = "home";
+    str_split(str3, " ", &length);
+
+    char str4[] = "";
+    str_split(str4, " ", &length);
+
+    char str5[] = "";
+    str_split(str5, "", &length);
+
+    char str6[] = " a single line ";
+    str_split(str6, " ", &length);
+
+    char str7[] = "!! the !!";
+    str_split(str7, "!", &length);
+
+    char str8[] = "1243424234";
+    str_split(str8, "a", &length);
+
+    char str9[] = "123456789";
+    str_split(str9, "9", &length);
+}
+
+
+void
+test_str_slice()
+{
+    char str[] = "abcdefghijkl";
+
+    assertNull(str_slice(str, -3, -10));
+    assertNull(str_slice(str, -1, -2));
+    assertNull(str_slice(str, -1, 0));
+    assertNull(str_slice(str, 1, 0));
+    assertNull(str_slice(str, 5, 4));
+    assertNull(str_slice(str, 0, 0));
+    assertNull(str_slice(str, 10, 10));
+    assertNull(str_slice(str, -2, -2));
+    assertNull(str_slice(str, -20, -12));
+    assertNull(str_slice(str, -20, -13));
+    assertNull(str_slice(str, 12, 13));
+    assertNull(str_slice(str, 12, 20));
+    assertNull(str_slice("", 1, 2));
+    assertNull(str_slice("", -2, -1));
+
+    assertStringEquals(str_slice(str, -3, -1), "jk");
+    assertStringEquals(str_slice(str, -8, -3), "efghi");
+    assertStringEquals(str_slice(str, -10, -9), "c");
+    assertStringEquals(str_slice(str, -2, -1), "k");
+    assertStringEquals(str_slice(str, -15, -1), "abcdefghijk");
+    assertStringEquals(str_slice(str, -12, -2), "abcdefghij");
+    assertStringEquals(str_slice(str, -15, -8), "abcd");
+    assertStringEquals(str_slice(str, -15, -11), "a");
+
+    assertStringEquals(str_slice(str, 1, 3), "bc");
+    assertStringEquals(str_slice(str, 11, 100), "l");
+    assertStringEquals(str_slice(str, 2, 4), "cd");
+    assertStringEquals(str_slice(str, 3, 6), "def");
+    assertStringEquals(str_slice(str, 0, 1), "a");
+    assertStringEquals(str_slice(str, 4, 6), "ef");
+    assertStringEquals(str_slice(str, 1, 2), "b");
+    assertStringEquals(str_slice(str, 0, 3), "abc");
+    assertStringEquals(str_slice(str, 0, 11), "abcdefghijk");
+    assertStringEquals(str_slice(str, 2, 10), "cdefghij");
+    assertStringEquals(str_slice(str, 0, 50), "abcdefghijkl");
+}
+
+
+void
 test_str()
 {
     test_str_to_upper_case();
@@ -1082,7 +1208,10 @@ test_str()
     test_str_is_digit();
     test_str_is_lower_case();
     test_str_is_upper_case();
-    test_str_is_title_case();
+    // test_str_is_title_case();
+
+    // test_str_split();
+    test_str_slice();
 }
 
 

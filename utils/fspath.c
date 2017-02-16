@@ -17,104 +17,98 @@
 // #include <sys/stat.h>
 
 #include "pprint.h"
+#include "testing/unittest.h"
 
 
 extern int errno;
 
 
 bool
-fs_path_is_valid(const char *path)
-{
-    return false;
-}
-
-
-bool
-fs_path_is_absolute(const char path[])
+fspath_is_absolute(const char path[])
 {
     return false;
 }
 
 
 char **
-fs_path_split(const char path[])
+fspath_split(const char path[])
 {
     return NULL;
 }
 
 
 void
-fs_path_print(const char path[])
+fspath_print(const char path[])
 {
 
 }
 
 
 bool
-fs_path_exists(const char path[])
+fspath_exists(const char path[])
 {
     return false;
 };
 
 
 bool
-fs_path_is_dir(const char path[])
+fspath_is_dir(const char path[])
 {
     return false;
 };
 
 
 bool
-fs_path_is_file(const char path[])
+fspath_is_file(const char path[])
 {
     return false;
 };
 
 
 bool
-fs_path_is_symlink(const char path[])
+fspath_is_symlink(const char path[])
 {
     return false;
 };
 
 
 bool
-fs_path_is_block(const char path[])
+fspath_is_block(const char path[])
 {
     return false;
 };
 
 
 bool
-fs_path_is_fifo(const char path[])
+fspath_is_fifo(const char path[])
 {
     return false;
 };
 
 
 bool
-fs_path_is_socket(const char path[])
+fspath_is_socket(const char path[])
 {
     return false;
 };
 
 
 char *
-fs_path_get_extension(const char path[])
+fspath_get_extension(const char path[])
 {
     return NULL;
 }
 
 
 int
-fs_path_get_size(const char path[])
+fspath_get_size(const char path[])
 {
     return -1;
 }
 
 
 bool
-fs_path_mkdir(const char path[])
+fspath_mkdir(const char path[])
 {
 
     return false;
@@ -122,7 +116,7 @@ fs_path_mkdir(const char path[])
 
 
 bool
-fs_path_write_file(const char path[], char *content, char method)
+fspath_write_file(const char path[], char *content, char method)
 {
 
     return false;
@@ -130,7 +124,7 @@ fs_path_write_file(const char path[], char *content, char method)
 
 
 bool
-fs_path_read_file(const char path[], char *content)
+fspath_read_file(const char path[], char *content)
 {
 
     return false;
@@ -138,7 +132,7 @@ fs_path_read_file(const char path[], char *content)
 
 
 bool
-fs_path_move(const char path[], const char new_location[])
+fspath_move(const char path[], const char new_location[])
 {
 
     return false;
@@ -146,7 +140,7 @@ fs_path_move(const char path[], const char new_location[])
 
 
 bool
-fs_path_copy(const char path[], char *location)\
+fspath_copy(const char path[], char *location)\
 {
 
     return false;
@@ -154,14 +148,14 @@ fs_path_copy(const char path[], char *location)\
 
 
 bool
-fs_path_rename(const char path[], const char new_location[])
+fspath_rename(const char path[], const char new_location[])
 {
     return false;
 }
 
 
 bool
-fs_path_listdir(const char path[], char **array)
+fspath_listdir(const char path[], char **array)
 {
 
     return false;
@@ -169,56 +163,56 @@ fs_path_listdir(const char path[], char **array)
 
 
 bool
-fs_path_parents(const char path[])
+fspath_parents(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_walk(const char path[])
+fspath_walk(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_child(const char path[])
+fspath_child(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_expand(const char path[])
+fspath_expand(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_expandUser(const char path[])
+fspath_expandUser(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_expandVars(const char path[])
+fspath_expandVars(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_relativeTo(const char path[])
+fspath_relativeTo(const char path[])
 {
     return false;
 }
 
 
 bool
-fs_path_resolve(const char path[])
+fspath_resolve(const char path[])
 {
     return false;
 }
@@ -229,35 +223,50 @@ fs_path_resolve(const char path[])
  */
 
 
+const char *paths[20] = {
+    "/media/setivolkylany/WorkDisk/Programming/Projects/c-utils",
+    "/media/setivolkylany/",
+    "/media/setivolkylany/WorkDisk/Private/A",
+    "/",
+    "////",
+    "math.h",
+    "./math.h",
+    "~/Downloads/",
+    "~/.bashrc",
+    "../main.c",
+    "../../../Sources/C-C++/The C programming language 1988.pdf",
+};
+
 void
-test_fs_path_is_valid(const char path[])
+test_fspath_is_absolute()
 {
-
+    assertTrue(fspath_is_absolute(paths[0]));
+    assertTrue(fspath_is_absolute(paths[1]));
+    assertTrue(fspath_is_absolute(paths[2]));
+    assertTrue(fspath_is_absolute(paths[3]));
+    assertTrue(fspath_is_absolute(paths[4]));
+    assertTrue(fspath_is_absolute(paths[5]));
+    assertTrue(fspath_is_absolute(paths[6]));
+    assertTrue(fspath_is_absolute(paths[7]));
+    assertTrue(fspath_is_absolute(paths[8]));
+    assertTrue(fspath_is_absolute(paths[9]));
+    assertTrue(fspath_is_absolute(paths[10]));
+    assertTrue(fspath_is_absolute(paths[11]));
+    assertTrue(fspath_is_absolute(paths[12]));
+    assertTrue(fspath_is_absolute(paths[13]));
+    assertTrue(fspath_is_absolute(paths[14]));
+    assertTrue(fspath_is_absolute(paths[15]));
+    assertTrue(fspath_is_absolute(paths[16]));
+    assertTrue(fspath_is_absolute(paths[17]));
+    assertTrue(fspath_is_absolute(paths[18]));
+    assertTrue(fspath_is_absolute(paths[19]));
 }
-
 
 
 void
 test_fspath()
 {
-    const char *paths[11] = {
-        "/media/setivolkylany/WorkDisk/Programming/Projects/c-utils",
-        "/media/setivolkylany/",
-        "/media/setivolkylany/WorkDisk/Private/A",
-        "/",
-        "////",
-        "math.h",
-        "./math.h",
-        "~/Downloads/",
-        "~/.bashrc",
-        "../main.c",
-        "../../../Sources/C-C++/The C programming language 1988.pdf",
-    };
-
-    for (int i = 0; i < 11; ++i) {
-        printf("%s is valid: %d\n", paths[i], fs_path_is_valid(paths[i]));
-
-    }
+    test_fspath_is_absolute();
 }
 
 

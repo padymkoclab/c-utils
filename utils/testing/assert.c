@@ -125,6 +125,27 @@
 }
 
 
+#define assertInStrings(str, strings, length) \
+{ \
+    bool b = false; \
+    for (int i = 0; i < length; ++i) { \
+        if (strstr(strings[i], str) != NULL) { \
+            PRINT_TEST_OK(__func__, __FILE__, __LINE__); \
+            b = true; \
+        } \
+    } \
+    if (b == false) { \
+        PRINT_TEST_FAIL(__func__, __FILE__, __LINE__, "not found in", str, "["); \
+        for (int i = 0; i < length; ++i) { \
+            printf("\"%s\"", strings[i]);\
+            if (i + 1 < length) \
+                printf(", "); \
+        } \
+        puts("]"); \
+    } \
+}
+
+
 // Does not work
 #define assertArrayEquals(array1, array2, length) \
 { \

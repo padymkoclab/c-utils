@@ -10,92 +10,72 @@
 #include <stdbool.h>
 
 
-/*
-
- */
-static bool
-is_valid_url(char *value) {
+bool
+is_valid_url(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_filename(char *value) {
+bool
+is_valid_filename(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_dirpath(char *value) {
+bool
+is_valid_path(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_email(char *value) {
+bool
+is_valid_email(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_domain(char *value) {
+bool
+is_valid_domain(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_uuid(char *value) {
+bool
+is_valid_uuid(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_ipv4(char *value) {
+bool
+is_valid_ipv4(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_ipv6(char *value) {
+bool
+is_valid_ipv6(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_mac_address(char *value) {
+bool
+is_valid_mac_address(char value[])
+{
     return false;
 };
 
 
-/*
-
- */
-static bool
-is_valid_slug(char *value) {
+bool
+is_valid_slug(char value[])
+{
     return false;
 };
 

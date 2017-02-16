@@ -68,7 +68,7 @@ random_float_array(float array[], const unsigned int length, const float min, co
 
 
 char
-random_choice_from_str(char str[])
+random_choice_char(char str[])
 {
     size_t len = strlen(str);
 
@@ -79,12 +79,18 @@ random_choice_from_str(char str[])
     return str[index];
 }
 
+char *
+random_choice_string(char *strings[], const unsigned int length)
+{
+    return strings[random_integer(0, length - 1)];
+}
+
 
 #define random_choice_from_array(array, length, value) (*value = array[random_integer(0, length)])
 
 
 char *
-random_word(unsigned int min_length, unsigned int max_length)
+random_string(unsigned int min_length, unsigned int max_length)
 {
     if (min_length < 1 || max_length < 1 || min_length > max_length)
         return NULL;
@@ -96,7 +102,7 @@ random_word(unsigned int min_length, unsigned int max_length)
     word = malloc(sizeof(char) * word_length);
 
     for (int i = 0; i < word_length; ++i)
-        word[i] = random_choice_from_str(ASCII_LOWERCASE);
+        word[i] = random_choice_char(ASCII_LOWERCASE);
 
     return word;
 }
@@ -127,16 +133,105 @@ random_shuffle_array(void *array, const size_t length)
 // random_sample_array(array, length, count)
 
 
-char
-random_charfromstring(char *str)
+// Support only for unix-like systems
+// https://www.google.com.ua/webhp?sourceid=chrome-instant&ion=1&espv=2&ie=UTF-8#q=unix+valid+filename
+// http://unix.stackexchange.com/questions/230291/what-characters-are-valid-to-use-in-filenames
+// http://stackoverflow.com/questions/457994/what-characters-should-be-restricted-from-a-unix-file-name
+// http://web.cse.ohio-state.edu/sce/reference/unix/filenames.html
+
+
+char *
+random_dirpath()
 {
-    int index = (rand() % strlen(str));
-    return str[index];
+    char *path;
+    unsigned int value, count_components_of_path;
+
+    path = malloc(200 * sizeof(char));
+    value = random_integer(1, 4);
+
+    // is absolute path
+    if (value == 1)
+        strcat(path, "/");
+
+    // path from current
+    else if (value == 2)
+        strcat(path, "./");
+
+    // path from parents
+    else if (value == 3)
+        strcat(path, "../");
+
+    // path from home directory
+    else
+        strcat(path, "~/");
+
+    // count parts in this path
+    count_components_of_path = random_integer(0, 10);
+
+    for (int i = 0; i < count_components_of_path; ++i) {
+
+        // is a hidden folder
+        if (random_boolean() == true)
+            strcat(path, ".");
+
+        strcat(path, random_string(1, 17));
+        strcat(path, "/");
+    }
+
+    // randomly add ending "/" to the path if no
+    if (random_boolean() == true && path[strlen(path) - 1] != '/')
+        strcat(path, "/");
+
+    return path;
 }
 
 
-// random_filepath
-// random_dirpath
+char *file_extensions[30] = {
+    "h", "c", "py", "js", "cpp", "xml", "json",
+    "yaml", "hpp", "csv", "css", "jpeg", "txt",
+    "rst", "md", "html", "png", "doc", "zip",
+    "exe", "pdf", "fb2", "gif", "tar.gz", "deb",
+    "java", "mp4", "mp3", "avi", "sh"
+};
+char *
+random_file_extension()
+{
+    return random_choice_string(file_extensions, 30);
+}
+
+
+char *
+random_filepath()
+{
+    char *path, *extension;
+    bool is_hidden, with_extension;
+
+    path = calloc(200, sizeof(char));
+
+    // path to the file
+    strcat(path, random_dirpath());
+
+    // is the file is hidden
+    is_hidden = random_boolean();
+    if (is_hidden == true)
+        strcat(path, ".");
+
+    // a filename
+    strcat(path, random_string(1, 15));
+
+    // add an extension to the file, if it is not hidden
+    if (is_hidden == false) {
+        with_extension = random_integer(-1, 10);
+        if (with_extension > 0) {
+            extension = random_file_extension();
+            strcat(path, extension);
+        }
+    }
+
+    return path;
+}
+
+
 // random_date
 // random_time
 // random_datetime
@@ -206,7 +301,7 @@ test_random_float()
     assertInRange(random_float(-100000, 100000), -100000, 100000);
     assertInRange(random_float(-1, 1), -1, 1);
     assertInRange(random_float(-0.5, -0.25), -0.5, -0.25);
-    assertEquals(random_float(0.668, 0.668), 0.668);
+    assertEquals(random_float(0.668, 0.668), 0.668f);
     assertInRange(random_float(-0.0007, -0.0006), -0.0007, -0.0006);
 }
 
@@ -251,7 +346,6 @@ test_random_int_array()
 }
 
 
-
 void
 test_random_float_array()
 {
@@ -275,30 +369,30 @@ test_random_float_array()
     assertInRange(array4[0], -0.1, 0.1);
 
     float array5[5];
-    random_float_array(array5, 5, -78974.7, -78974.7);
-    for (int i = 0; i < 5; ++i)
-        // printf("%f\n", array5[i]);
-        assertEquals(array5[i], -78974.787);
+    random_float_array(array5, 5, -784545.77812145, -784545.77812145);
+    for (int i = 0; i < 5; ++i) {
+        assertEquals(array5[i], -784545.77812145f);
+    }
 }
 
 
 void
-test_random_choice_from_str()
+test_random_choice_char()
 {
     char chr;
 
-    chr = random_choice_from_str("abcd");
+    chr = random_choice_char("abcd");
     assertTrue((chr == 'a' || chr == 'b' || chr == 'c' || chr == 'd'));
 
-    chr = random_choice_from_str("j s o n.h ");
+    chr = random_choice_char("j s o n.h ");
     assertTrue((chr == 'j' || chr == 's' || chr == 'o' || chr == 'n' || chr == '.' || chr == 'h' || chr == ' '));
 
-    assertEquals(random_choice_from_str("zzzzz"), 'z');
-    assertEquals(random_choice_from_str(" "), ' ');
-    assertEquals(random_choice_from_str(""), '\0');
-    assertEquals(random_choice_from_str("1"), '1');
+    assertEquals(random_choice_char("zzzzz"), 'z');
+    assertEquals(random_choice_char(" "), ' ');
+    assertEquals(random_choice_char(""), '\0');
+    assertEquals(random_choice_char("1"), '1');
 
-    chr = random_choice_from_str("\t\b\n\a\v");
+    chr = random_choice_char("\t\b\n\a\v");
     assertTrue((chr == '\t' || chr == '\b' || chr == '\n' || chr == '\a' || chr == '\v'));
 }
 
@@ -315,41 +409,115 @@ test_random_choice_from_array()
 
 
 void
-test_random_word()
+test_random_string()
 {
     char *word;
     word = calloc(20, sizeof(char));
 
-    assertNull(random_word(0, 10));
-    assertNull(random_word(-1, 5));
-    assertNull(random_word(-10, -3));
-    assertNull(random_word(5, 0));
-    assertNull(random_word(0, 0));
+    assertNull(random_string(0, 10));
+    assertNull(random_string(-1, 5));
+    assertNull(random_string(-10, -3));
+    assertNull(random_string(5, 0));
+    assertNull(random_string(0, 0));
 
-    word = random_word(1, 20);
+    word = random_string(1, 20);
     assertInRange(strlen(word), 1, 20);
 
-    word = random_word(2, 20);
+    word = random_string(2, 20);
     assertInRange(strlen(word), 2, 20);
 
-    word = random_word(3, 20);
+    word = random_string(3, 20);
     assertInRange(strlen(word), 3, 20);
 
-    word = random_word(4, 20);
+    word = random_string(4, 20);
     assertInRange(strlen(word), 4, 20);
 
-    word = random_word(5, 20);
+    word = random_string(5, 20);
     assertInRange(strlen(word), 5, 20);
 
-    word = random_word(10, 20);
+    word = random_string(10, 20);
     assertInRange(strlen(word), 10, 20);
 
-    word = random_word(19, 20);
+    word = random_string(19, 20);
     assertInRange(strlen(word), 19, 20);
 
-    word = random_word(20, 20);
+    word = random_string(20, 20);
     assertEquals(strlen(word), 20);
+}
 
+
+void
+test_random_choice_string()
+{
+    char *str;
+
+    char *strings1[3] = {
+        "math.h", "Simple", "text"
+    };
+    for (int i = 0; i < 3; ++i) {
+        str = random_choice_string(strings1, 3);
+        assertInStrings(str, strings1, 3);
+    }
+
+    char *strings2[3] = {
+        "abc", "abc", "abc"
+    };
+    for (int i = 0; i < 3; ++i)
+        assertStringEquals(random_choice_string(strings2, 3), "abc");
+
+    char *strings3[5] = {
+        "\b\tasd\t", "sime", "\tca\'t\t", "c++ is not c", "knowledges is power"
+    };
+    for (int i = 0; i < 3; ++i) {
+        str = random_choice_string(strings3, 5);
+        assertInStrings(str, strings3, 5);
+    }
+
+    char *strings4[1] = {""};
+    for (int i = 0; i < 3; ++i)
+        assertStringEquals(random_choice_string(strings4, 1), "");
+}
+
+
+void
+test_random_file_extension()
+{
+    char *ext;
+
+    ext = random_file_extension();
+    assertInStrings(ext, file_extensions, 30);
+
+    ext = random_file_extension();
+    assertInStrings(ext, file_extensions, 30);
+
+    ext = random_file_extension();
+    assertInStrings(ext, file_extensions, 30);
+
+    ext = random_file_extension();
+    assertInStrings(ext, file_extensions, 30);
+}
+
+
+void
+test_random_dirpath()
+{
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+    puts(random_dirpath());
+}
+
+
+void
+test_random_filepath()
+{
+    puts(random_filepath());
 }
 
 
@@ -359,14 +527,17 @@ test_random()
     srand(time(NULL));
 
     test_random_integer();
-    // test_random_float();
+    test_random_float();
     test_random_boolean();
     test_random_int_array();
-    // test_random_float_array();
-    test_random_choice_from_str();
+    test_random_float_array();
+    test_random_choice_char();
+    test_random_choice_string();
     test_random_choice_from_array();
-    test_random_word();
-
+    test_random_string();
+    test_random_file_extension();
+    test_random_dirpath();
+    test_random_filepath();
 }
 
 
