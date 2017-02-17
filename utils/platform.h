@@ -50,28 +50,67 @@
 #endif
 
 
-// Returns a name of platform
 char *
-get_platform_name() {
+get_system_family()
+{
     return (PLATFORM_NAME == NULL) ? "" : PLATFORM_NAME;
+}
+
+
+char *
+get_kernel_stat()
+{
+    return (PLATFORM_NAME == NULL) ? "" : PLATFORM_NAME;
+}
+
+
+char *
+get_operating_system()
+{
+
 }
 
 
 // Returns a POSIX version of a system, if the system support it, otherwise return 0
 long int
-get_posix_version() {
+get_posix_version()
+{
     return (IS_POSIX_SYSTEM == 1) ? _POSIX_VERSION : 0;
 }
 
 
-enum platform_bit_t { _unknownArch, _64bitArch, _32bitArch};
-
-enum platform_bit_t
-get_architecture(){
+char *
+get_architecture()
+{
     size_t int_size = sizeof(int*);
-    if (int_size == 8) return _64bitArch;
-    else if (int_size == 4) return _32bitArch;
-    else return _unknownArch;
+    if (int_size == 8)
+        return "64bit";
+    else if (int_size == 4)
+        return "32bit";
+    else
+        return NULL;
+}
+
+
+char *
+get_platform()
+{
+
+}
+
+
+char *
+get_machine()
+{
+    return "x86_64";
+    return NULL;
+}
+
+
+char *
+get_processor()
+{
+
 }
 
 

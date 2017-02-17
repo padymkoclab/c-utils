@@ -55,13 +55,30 @@ get_memory_status(const int process_id)
 }
 
 
-int
-get_memory_info()
+unsigned long int
+get_memory_ram()
 {
-    // return cache memory size
-    // return RAM memory size
-    // return total memory size
+    return 0;
+}
 
+
+unsigned long int
+get_memory_swap()
+{
+    return 0;
+}
+
+
+unsigned long int
+get_memory_total()
+{
+    return 0;
+}
+
+
+unsigned long int
+get_memory_cache()
+{
     return 0;
 }
 
@@ -70,6 +87,13 @@ int
 get_hardware_list()
 {
     return 0;
+}
+
+
+char *
+get_architerture()
+{
+    return NULL;
 }
 
 
@@ -167,6 +191,13 @@ print_display_resolution_by_X11()
 
     XCloseDisplay(display);
     */
+    return 0;
+}
+
+
+unsigned int
+get_count_kernels()
+{
     return 0;
 }
 
