@@ -38,7 +38,7 @@ struct statusMemory {
 // Not implemented
 // Return a current CPU usage of the system
 float
-get_total_cpu_usage()
+system_get_total_cpu_usage()
 {
     return 0;
 }
@@ -49,49 +49,49 @@ get_total_cpu_usage()
     otherwise for process id.
  */
 int
-get_memory_status(const int process_id)
+system_get_memory_status(const int process_id)
 {
     return 0;
 }
 
 
 unsigned long int
-get_memory_ram()
+system_get_memory_ram()
 {
     return 0;
 }
 
 
 unsigned long int
-get_memory_swap()
+system_get_memory_swap()
 {
     return 0;
 }
 
 
 unsigned long int
-get_memory_total()
+system_get_memory_total()
 {
     return 0;
 }
 
 
 unsigned long int
-get_memory_cache()
+system_get_memory_cache()
 {
     return 0;
 }
 
 
 int
-get_hardware_list()
+system_get_hardware_list()
 {
     return 0;
 }
 
 
 char *
-get_architerture()
+system_get_architerture()
 {
     return NULL;
 }
@@ -100,7 +100,7 @@ get_architerture()
 // http://www.thegeekstuff.com/2011/04/identify-file-system-type/?utm_source=twitterfeed&utm_medium=twitter
 // Show information about the file system on which each FILE resides, or all file systems by default
 bool
-filesystem_info()
+system_filesystem_info()
 {
     if (IS_POSIX_SYSTEM != 1)
         return false;
@@ -133,7 +133,7 @@ filesystem_info()
 
 // Summarize disk usage of each FILE, recursively for directories.
 int
-disk_usage()
+system_disk_usage()
 {
     return 0;
 }
@@ -144,7 +144,7 @@ disk_usage()
     https://en.wikipedia.org/wiki/GTK%2B
  */
 int
-print_screen_resolution_by_GTK(int argc, char *argv[])
+system_print_screen_resolution_by_GTK(int argc, char *argv[])
 {
     /*
     GdkScreen *screen;
@@ -171,7 +171,7 @@ print_screen_resolution_by_GTK(int argc, char *argv[])
         http://surfingtroves.blogspot.com/2011/01/how-to-get-screen-resolution-in-linux-c.html
  */
 int
-print_display_resolution_by_X11()
+system_print_display_resolution_by_X11()
 {
     /*
     Display *display;
@@ -195,8 +195,15 @@ print_display_resolution_by_X11()
 }
 
 
-unsigned int
-get_count_kernels()
+unsigned short int
+system_get_count_kernels()
+{
+    return 0;
+}
+
+
+unsigned short int
+system_get_temperature()
 {
     return 0;
 }

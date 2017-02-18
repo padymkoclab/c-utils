@@ -67,7 +67,7 @@ get_kernel_stat()
 char *
 get_operating_system()
 {
-
+    return NULL;
 }
 
 
@@ -95,7 +95,7 @@ get_architecture()
 char *
 get_platform()
 {
-
+    return NULL;
 }
 
 
@@ -103,14 +103,13 @@ char *
 get_machine()
 {
     return "x86_64";
-    return NULL;
 }
 
 
 char *
 get_processor()
 {
-
+    return NULL;
 }
 
 

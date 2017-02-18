@@ -31,24 +31,6 @@ number_get_length_float(const double number)
 }
 
 
-// http://www.programmingsimplified.com/c/source-code/c-program-convert-decimal-to-binary
-// http://stackoverflow.com/questions/6373093/how-to-print-binary-number-via-printf
-// https://www.programiz.com/c-programming/examples/binary-decimal-convert
-// http://stackoverflow.com/questions/111928/is-there-a-printf-converter-to-print-in-binary-format
-char *
-number_dec_to_bin(int n)
-{
-    return NULL;
-}
-
-
-long int
-number_bin_to_dec(char value[], int *number)
-{
-    return 0;
-}
-
-
 /**
  * Tests
  */
