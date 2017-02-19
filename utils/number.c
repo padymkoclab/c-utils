@@ -31,6 +31,18 @@ number_get_length_float(const double number)
 }
 
 
+char *
+number_itoa(long long int number)
+{
+    unsigned int len = (number == 0) ? 1: log10(abs(number));
+    char *buffer = calloc(len, sizeof(char));
+    sprintf(buffer, "%lli", number);
+    printf("%d %li\n", len, strlen(buffer));
+    return buffer;
+}
+
+
+
 /**
  * Tests
  */
@@ -76,10 +88,37 @@ test_number_get_length_float()
 
 
 void
+test_number_itoa()
+{
+    assertStringEquals(number_itoa(-68012292987), "-68012292987");
+    assertStringEquals(number_itoa(-29414028), "-29414028");
+    assertStringEquals(number_itoa(-85922833), "-85922833");
+    assertStringEquals(number_itoa(-39093372), "-39093372");
+    assertStringEquals(number_itoa(-2091571), "-2091571");
+    assertStringEquals(number_itoa(-54760), "-54760");
+    assertStringEquals(number_itoa(-20930), "-20930");
+    assertStringEquals(number_itoa(-1382), "-1382");
+    assertStringEquals(number_itoa(-40), "-40");
+    assertStringEquals(number_itoa(-7), "-7");
+    assertStringEquals(number_itoa(0), "0");
+    assertStringEquals(number_itoa(6), "6");
+    assertStringEquals(number_itoa(92), "92");
+    assertStringEquals(number_itoa(1849), "1849");
+    assertStringEquals(number_itoa(35976), "35976");
+    assertStringEquals(number_itoa(192476), "192476");
+    assertStringEquals(number_itoa(3548910), "3548910");
+    assertStringEquals(number_itoa(20047706), "20047706");
+    assertStringEquals(number_itoa(533285721), "533285721");
+    assertStringEquals(number_itoa(4552202867), "4552202867");
+}
+
+
+void
 test_number()
 {
     test_number_length_int();
-    test_number_get_length_float();
+    // test_number_get_length_float();
+    test_number_itoa();
 }
 
 

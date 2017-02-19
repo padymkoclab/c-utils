@@ -24,8 +24,7 @@ typedef struct _CounterWords {
 // Need rewrite
 char **
 text_get_words(char text[], unsigned int *length)
-{
-
+{ /*
     char *word;
 
     if (text != NULL) {
@@ -41,6 +40,8 @@ text_get_words(char text[], unsigned int *length)
     }
 
     return word;
+*/
+    return NULL;
 }
 
 
@@ -76,9 +77,28 @@ is a
 slug
  */
 char *
-wordwrap(char text[], const unsigned int width)
+text_wrap(char text[], const unsigned int width)
 {
     return NULL;
+}
+
+
+/**
+ * Tests
+ */
+
+
+void
+test_text_wrap()
+{
+    text_wrap();
+}
+
+
+void
+test_text()
+{
+    test_text_wrap();
 }
 
 

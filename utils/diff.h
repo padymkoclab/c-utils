@@ -1,3 +1,6 @@
 /**
- * Utils for determination diffrence between files and folders
+ * Utils for determination a diffrence between files with folders and strings
+ *
+ * https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+ * http://www.xmailserver.org/diff2.pdf
  */

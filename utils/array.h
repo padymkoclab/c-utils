@@ -240,13 +240,20 @@ array_insert()
 }
 
 
-/*
-    http://stackoverflow.com/questions/1696074/how-can-i-concatenate-two-arrays-in-c
- */
+// http://stackoverflow.com/questions/1696074/how-can-i-concatenate-two-arrays-in-c
 int
 extend_array()
 {
     return 0;
+}
+
+
+// http://stackoverflow.com/questions/5850000/how-to-split-array-into-two-arrays-in-c
+// http://stackoverflow.com/questions/36526259/split-c-array-into-n-equal-parts
+int
+array_wrap()
+{
+
 }
 
 

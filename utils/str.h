@@ -424,37 +424,50 @@ str_slice(char str[], int slice_from, int slice_to)
 
 // http://stackoverflow.com/questions/9210528/split-string-with-delimiters-in-c
 // http://stackoverflow.com/questions/15472299/split-string-into-tokens-and-save-them-in-an-array
+// http://stackoverflow.com/questions/4513316/split-string-in-c-every-white-space
 char **
-str_split(char *text, char *delimiter, unsigned int *length)
+str_split(char *string, char *delimiter, unsigned int *length)
 {
-    if (strcmp(delimiter, "") == 0)
-        return NULL;
-
-    char **result, *string, *rest_text;
-    unsigned int string_len;
-    size_t delimiter_len;
+    char **result;
 
     *length = 1;
-    delimiter_len = strlen(delimiter);
     result = malloc(sizeof(char) * (*length));
 
-    result = realloc(result, sizeof(char) * (*length));
+    // if the string is empty - return an array with a single empty string
+    if (*string == '\0') {
+        result[0] = malloc(sizeof(char) * (*length));
+        strcpy(result[0], "");
+        return result;
+    }
 
-    printf("%s: \"%s\" -> ", text, delimiter);
+    // char *str;
+    char *rest_str;
+    unsigned int string_len;
+    size_t delimiter_len = strlen(delimiter);
 
-    while (*text != '\0') {
-        rest_text = strstr(text, delimiter);
+    // for the empty delimiter length must be 1
+    if (delimiter_len == 0)
+        ++delimiter_len;
 
-        if (rest_text == '\0') {
-            printf("\"%s\" |", text);
+
+    printf("\"%s\": \"%s\"\n--------------------------------\n", string, delimiter);
+
+    while (*string != '\0') {
+        result = realloc(result, sizeof(char) * (*length));
+
+        rest_str = strstr(string, delimiter);
+        printf("%s --> %s\n", string, rest_str);
+
+        if (rest_str == '\0') {
+            printf("---\"%s\"-----", string);
             break;
         }
 
-        string_len = strlen(text) - strlen(rest_text);
+        string_len = strlen(string) - strlen(rest_str);
         string = malloc(sizeof(char) * string_len);
-        strncpy(string, text, string_len);
-        printf("\"%s\" | ", string);
-        text = rest_text + delimiter_len;
+        strncpy(string, string, string_len);
+        // printf("\"%s\" | ", string);
+        string = rest_str + delimiter_len;
         ++(*length);
     }
     puts("");
@@ -784,6 +797,21 @@ str_concatenate(int count, ...)
 }
 
 
+int
+str_prepend(char string[], char prefix[])
+{
+    size_t prefix_len = strlen(prefix);
+    size_t string_len = strlen(string);
+
+    memmove(string + prefix_len, string, string_len);
+
+    for (int i = 0; i < prefix_len; ++i)
+        string[i] = prefix[i];
+
+    return 0;
+}
+
+
 /**
  * Tests
  */
@@ -1109,44 +1137,53 @@ test_str_is_title_case()
 }
 
 
+
 void
 test_str_split()
 {
+    // char **strings;
     unsigned int length;
 
-    char str1[] = "/.fas/.dire/.fixk/.saios/";
-    str_split(str1, "/", &length);
-    str_split(str1, ".", &length);
-    str_split(str1, "/.", &length);
-    str_split(str1, "/.f", &length);
-    str_split(str1, "i", &length);
-    str_split(str1, "**", &length);
+    // char str1[] = "/.fas/.dire/.fixk/.saios//";
+    // str_split(str1, "/", &length);
+    // str_split(str1, ".", &length);
+    // str_split(str1, "/.", &length);
+    // str_split(str1, "/.f", &length);
+    // str_split(str1, "i", &length);
+    // str_split(str1, "**", &length);
 
-    char str2[] = "/aaa/bb/c/";
-    str_split(str2, "/", &length);
+    // char str2[] = "/aaa/bb/c/";
+    // str_split(str2, "/", &length);
 
-    char str3[] = "home";
-    str_split(str3, " ", &length);
+    // char str3[] = "home";
+    // strings = str_split(str3, " ", &length);
+    // puts(strings[0]);
+    // assertStringEquals(strings[0], "home");
 
-    char str4[] = "";
-    str_split(str4, " ", &length);
+    // char str4[] = "";
+    // str_split(str4, "", &length);
+    // putd(length);
 
-    char str5[] = "";
+    char str5[] = " a simon!";
     str_split(str5, "", &length);
+    putd(length);
 
-    char str6[] = " a single line ";
-    str_split(str6, " ", &length);
+    // char str6[] = " a single line ";
+    // str_split(str6, " ", &length);
 
-    char str7[] = "!! the !!";
-    str_split(str7, "!", &length);
+    // char str7[] = "!! the !!";
+    // str_split(str7, "!", &length);
 
-    char str8[] = "1243424234";
-    str_split(str8, "a", &length);
+    // char str8[] = "1243424234";
+    // str_split(str8, "a", &length);
 
-    char str9[] = "123456789";
-    str_split(str9, "9", &length);
+    // char str9[] = "123456789";
+    // str_split(str9, "9", &length);
+
+    // char str10[] = "";
+    // str_split(str10, " ", &length);
+    // putd(length);
 }
-
 
 void
 test_str_slice()
@@ -1192,6 +1229,23 @@ test_str_slice()
 
 
 void
+test_str_prepend()
+{
+    char *buffer;
+    buffer = malloc(sizeof(buffer) * 200);
+
+    str_prepend(buffer, "");
+    assertStringEquals(buffer, "");
+    str_prepend(buffer, "1");
+    assertStringEquals(buffer, "1");
+    str_prepend(buffer, "text ");
+    assertStringEquals(buffer, "text 1");
+    str_prepend(buffer, "\tI prepended some text before\n");
+    assertStringEquals(buffer, "\tI prepended some text before\ntext 1");
+}
+
+
+void
 test_str()
 {
     test_str_to_upper_case();
@@ -1210,8 +1264,9 @@ test_str()
     test_str_is_upper_case();
     // test_str_is_title_case();
 
-    // test_str_split();
+    test_str_split();
     test_str_slice();
+    test_str_prepend();
 }
 
 
