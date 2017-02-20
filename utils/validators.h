@@ -80,4 +80,24 @@ is_valid_slug(char value[])
 };
 
 
+/**
+ * Tests
+ */
+
+
+void
+test_()
+{
+    is_valid_ipv4("69.89.31.226");
+    is_valid_ipv4("98.139.180.149");
+    is_valid_ipv4("192.168.1.98");
+    is_valid_ipv4("127.0.0.0");
+    is_valid_ipv4("0.0.0.0");
+    is_valid_ipv4("");
+    is_valid_ipv6("2002:4559:1FE2::4559:1FE2");
+    is_valid_ipv6("fe80::9e2a:70ff:fe53:c949/64");
+    is_valid_ipv6("");
+}
+
+
 #endif // __VALIDATORS_H__
