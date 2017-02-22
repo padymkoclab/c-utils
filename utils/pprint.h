@@ -65,4 +65,19 @@ printStatStruct(char *path, struct stat path_stat)
 }
 
 
+
+void
+printANSI()
+{
+
+}
+
+
+void
+printUnicode()
+{
+
+}
+
+
 #endif // __PRETTY_PRINT_H__

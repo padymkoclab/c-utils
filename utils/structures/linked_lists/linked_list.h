@@ -466,7 +466,7 @@ test_linked_list_traverse(linked_list_node_t *linked_list)
 
 
 void
-linked_list_test()
+test_linked_list()
 {
     unsigned int length;
     linked_list_node_t *linked_list;

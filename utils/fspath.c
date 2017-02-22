@@ -44,6 +44,14 @@ fspath_print(const char path[])
 }
 
 
+// https://www.cyberciti.biz/faq/linux-show-directory-structure-command-line/
+void
+fspath_print_tree(const char path[])
+{
+
+}
+
+
 bool
 fspath_exists(const char path[])
 {

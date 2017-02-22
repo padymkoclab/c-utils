@@ -572,6 +572,30 @@ str_strip(char *str, char *substr, char action)
 }
 
 
+
+
+// http://stackoverflow.com/questions/7775138/strip-whitespace-from-a-string-in-place
+// http://stackoverflow.com/questions/122616/how-do-i-trim-leading-trailing-whitespace-in-a-standard-way
+char *
+str_trim(char str[])
+{
+    char *buffer;
+
+    char *str_end = str + strlen(str) - 1;
+
+    while (isspace(*str)) ++str;
+
+    while (isspace(*str_end)) --str_end;
+
+    size_t len = strlen(str) - strlen(str_end) + 1;
+
+    buffer =calloc(len, sizeof(char));
+    strncpy(buffer, str, len);
+
+    return buffer;
+}
+
+
 int
 str_replace(char *str, char *substr_from, char *substr_to, unsigned int count)
 {
@@ -617,137 +641,48 @@ str_replace(char *str, char *substr_from, char *substr_to, unsigned int count)
 }
 
 
-int
-escape_string(char *str)
+char *
+str_escape(char str[])
 {
+    char chr[3];
+    char *buffer = malloc(sizeof(char));
+    unsigned int len = 0, blk_size;
 
-    const size_t str_len = strlen(str);
-
-    char *buffer;
-    buffer = malloc(2 * str_len * sizeof(char) + 1);
-
-    int i = 0;
-
-    char escapedChr[3];
-
-    while (i < str_len) {
-        if (strchr(ESCAPED_CHARS, str[i]) != 0) {
-            switch (str[i]) {
-                case '\a':
-                    strcpy(escapedChr, "\\a");
-                    break;
-                case '\b':
-                    strcpy(escapedChr, "\\b");
-                    break;
-                case '\f':
-                    strcpy(escapedChr, "\\f");
-                    break;
-                case '\n':
-                    strcpy(escapedChr, "\\n");
-                    break;
-                case '\t':
-                    strcpy(escapedChr, "\\t");
-                    break;
-                case '\r':
-                    strcpy(escapedChr, "\\r");
-                    break;
-                case '\v':
-                    strcpy(escapedChr, "\\v");
-                    break;
-                case '\"':
-                    strcpy(escapedChr, "\"");
-                    break;
-                case '\'':
-                    strcpy(escapedChr, "\'");
-                    break;
-                case '\\':
-                    strcpy(escapedChr, "\\");
-                    break;
-                default:
-                    strcpy(escapedChr, "");
-                    break;
-            }
-            strcat(buffer, escapedChr);
-        } else {
-            strncat(buffer, &str[i], 1);
+    while (*str != '\0') {
+        blk_size = 2;
+        switch (*str) {
+            case '\n':
+                strcpy(chr, "\\n");
+                break;
+            case '\t':
+                strcpy(chr, "\\t");
+                break;
+            case '\v':
+                strcpy(chr, "\\v");
+                break;
+            case '\f':
+                strcpy(chr, "\\f");
+                break;
+            case '\a':
+                strcpy(chr, "\\a");
+                break;
+            case '\b':
+                strcpy(chr, "\\b");
+                break;
+            case '\r':
+                strcpy(chr, "\\r");
+                break;
+            default:
+                sprintf(chr, "%c", *str);
+                blk_size = 1;
+                break;
         }
-        ++i;
+        len += blk_size;
+        buffer = realloc(buffer, len * sizeof(char));
+        strcat(buffer, chr);
+        ++str;
     }
-
-    str = realloc(str, sizeof(char) * strlen(buffer));
-    strcpy(str, buffer);
-
-    free(buffer);
-
-    return 0;
-}
-
-
-int
-unescape_string(char *str)
-{
-
-    return -1;
-
-    const size_t str_len = strlen(str);
-
-    char *buffer;
-    buffer = malloc(str_len * sizeof(char) + 1000);
-
-    int i = 0;
-
-    char escapedChr[3];
-
-    while (i < str_len) {
-        if (strchr(ESCAPED_CHARS, str[i]) != 0) {
-            switch (str[i]) {
-                case '\a':
-                    strcpy(escapedChr, "\\a");
-                    break;
-                case '\b':
-                    strcpy(escapedChr, "\\b");
-                    break;
-                case '\f':
-                    strcpy(escapedChr, "\\f");
-                    break;
-                case '\n':
-                    strcpy(escapedChr, "\\n");
-                    break;
-                case '\t':
-                    strcpy(escapedChr, "\\t");
-                    break;
-                case '\r':
-                    strcpy(escapedChr, "\\r");
-                    break;
-                case '\v':
-                    strcpy(escapedChr, "\\v");
-                    break;
-                case '\"':
-                    strcpy(escapedChr, "\"");
-                    break;
-                case '\'':
-                    strcpy(escapedChr, "\'");
-                    break;
-                case '\\':
-                    strcpy(escapedChr, "\\");
-                    break;
-                default:
-                    strcpy(escapedChr, "");
-                    break;
-            }
-            strcat(buffer, escapedChr);
-        } else {
-            strncat(buffer, &str[i], 1);
-        }
-        ++i;
-    }
-
-    str = realloc(str, sizeof(char) * strlen(buffer));
-    strcpy(str, buffer);
-
-    free(buffer);
-
-    return 0;
+    return buffer;
 }
 
 
@@ -1245,6 +1180,50 @@ test_str_prepend()
 }
 
 
+
+void
+test_str_escape()
+{
+    assertStringEquals(str_escape("\tAnbms\n"), "\\tAnbms\\n");
+    assertStringEquals(str_escape("\tA\v\fZ\a"), "\\tA\\v\\fZ\\a");
+    assertStringEquals(str_escape("txt \t\n\r\f\a\v 1 \t\n\r\f\a\v tt"), "txt \\t\\n\\r\\f\\a\\v 1 \\t\\n\\r\\f\\a\\v tt");
+    assertStringEquals(str_escape("dhsjdsdjhs hjd hjds "), "dhsjdsdjhs hjd hjds ");
+    assertStringEquals(str_escape(""), "");
+    assertStringEquals(str_escape("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\f\a\v"), "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \\t\\n\\r\\f\\a\\v");
+    assertStringEquals(str_escape("\x0b\x0c\t\n\r\f\a\v"), "\\v\\f\\t\\n\\r\\f\\a\\v");
+    assertStringEquals(str_escape("\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x00"), "\x01\x02\x03\x04\x05\x06\\a\\b\\t\\n\\v\\f\\r\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\x00");
+}
+
+
+void
+test_str_trim()
+{
+
+    char *data[16] = {
+        "  simple text  ",
+        "  simple text",
+        "simple text",
+        " text ",
+        " ",
+        "",
+        "\n\t\v",
+        "",
+        " simple text",
+        "Remember good   ",
+        "    By center   ",
+        " \t\n\r\b\a\v By center \t\n\r\b\a\v ",
+        "    ",
+        "\t\n\r\b\a\v",
+        " \t\n\r\b\a\v simple text ",
+        "Remember good  \t\n\r\b\a\v ",
+    };
+
+    for (int i = 0; i < 10; ++i) {
+        printf("\"%s\" --> \"%s\"\n", data[i], str_trim(data[i]));
+    }
+}
+
+
 void
 test_str()
 {
@@ -1264,9 +1243,13 @@ test_str()
     test_str_is_upper_case();
     // test_str_is_title_case();
 
-    test_str_split();
+    // test_str_split();
+
     test_str_slice();
     test_str_prepend();
+
+    // test_str_trim();
+    test_str_escape();
 }
 
 

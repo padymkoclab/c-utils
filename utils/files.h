@@ -14,7 +14,15 @@
  * Not implemented
  */
 void
-readLines(const char *filepath) {
+stream_read_lines(FILE *stream) {
+}
+
+
+// https://dev.w3.org/libwww/Library/src/vms/getline.c
+void
+stream_read_line(FILE *stream)
+{
+
 }
 
 
