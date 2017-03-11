@@ -16,7 +16,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <limits.h>
 
 
 /*
@@ -37,10 +37,33 @@ Format localization will be respected if enabled, e.g. with the 'de' language:
 45000 becomes '45.000'.
 450000 becomes '450.000'
  */
-static char *
-intcomma(const int number) {
-    return "";
+char *
+intcomma(long int number) {
+    char *buffer;
+    unsigned int length = 0;
+    // unsigned int digit;
+
+    if (number < 0) {
+        ++length;
+        number *= -1;
+    }
+
+    printf("%li\n", number);
+
+    // while (number) {
+    //     if (number > 1000000) {
+    //     }
+    //     printf("%li %li\n", number, number % 10);
+    //     number = number / 10;
+    //     length += 1;
+    // }
+
+    buffer = calloc(length, sizeof(char));
+    // printf("%d\n", length);
+
+    return buffer;
 }
+
 
 
 /*
@@ -164,7 +187,7 @@ txt = "This is a test ---"
     self.assertEqual(r, 'foo-bar')
 
  */
-static char *
+char *
 slugify(const char string) {
     return "";
 }
@@ -179,7 +202,7 @@ slugify(const char string) {
 >>> humanize.naturalsize(1000000, gnu=True)
 '976.6K'
  */
-static char *
+char *
 binary_prefix(const int number) {
     return "";
 }
@@ -208,13 +231,13 @@ Examples (when ‘today’ is 17 Feb 2007):
 17 Feb 2007 becomes today.
 18 Feb 2007 becomes tomorrow.
  */
-static char *
+char *
 naturalday(const int number) {
     return "";
 }
 
 
-static char *
+char *
 natural_time_delta(const int number) {
     return "";
 }
@@ -243,7 +266,7 @@ Examples (when ‘now’ is 17 Feb 2007 16:30:00):
 18 Feb 2007 16:31:29 becomes 1 day from now.
 26 Feb 2007 18:31:29 becomes 1 week, 2 days from now.
  */
-static char *
+char *
 naturaltime(const int number) {
     return "";
 }
@@ -261,7 +284,7 @@ naturaltime(const int number) {
 >>> humanize.fractional(1)
 '1'
  */
-static char *
+char *
 fractional(const int number) {
     return "";
 }
@@ -276,7 +299,7 @@ Examples:
 2 becomes two.
 10 becomes 10.
  */
-static char *
+char *
 apnumber(const int number) {
     return "";
 }
@@ -298,7 +321,7 @@ Format localization will be respected if enabled, e.g. with the 'de' language:
 1200000 becomes '1,2 Million'.
 1200000000 becomes '1,2 Milliarden'.
  */
-static char *
+char *
 intword(const int number) {
     return "";
 }
@@ -313,9 +336,31 @@ Examples:
 2 becomes 2nd.
 3 becomes 3rd.
  */
-static char *
+char *
 ordinal(const int number) {
     return "";
+}
+
+
+/**
+ * Tests
+ */
+
+void
+test_intcomma()
+{
+    // intcomma(4294967296);
+    // intcomma(65536);
+    intcomma(42949672);
+    // puts(intcomma(256));
+    // puts(intcomma(4294967296));
+}
+
+
+void
+test_humanize()
+{
+    test_intcomma();
 }
 
 

@@ -596,48 +596,61 @@ str_trim(char str[])
 }
 
 
-int
-str_replace(char *str, char *substr_from, char *substr_to, unsigned int count)
+// http://stackoverflow.com/questions/779875/what-is-the-function-to-replace-string-in-c
+// http://stackoverflow.com/questions/4408170/for-string-find-and-replace
+char *
+str_replace(char str[], char old[], char new[])
 {
-/*
-    size_t str_len = strlen(str);
-    size_t substr_from_len = strlen(substr_from);
-    size_t substr_to_len = strlen(substr_to);
+    char *rest_str, *buffer;
+    size_t len;
+    size_t new_len = strlen(new);
+    size_t old_len = strlen(old);
+    size_t buffer_len;
 
-    if (substr_from_len > str_len) return 0;
+    if (old_len == 0) {
+        if (new_len == 0)
+            return str;
 
-    unsigned int countSubstr = count_substr_of_string(str, substr_from);
+        len = strlen(str) * (new_len + 1) + new_len;
+        buffer = calloc(len, sizeof(char));
 
-    if (countSubstr == 0) return 0;
+        while (*str != '\0') {
+            strcat(buffer, new);
 
-    size_t new_len_str = str_len - (countSubstr * substr_from_len) + (countSubstr * substr_to_len);
+            buffer_len = strlen(buffer);
 
-    char *buffer;
-    buffer = calloc(new_len_str, sizeof(char));
+            buffer[buffer_len] = *str;
+            buffer[buffer_len + 1] = '\0';
 
-    int i = 0;
-    int start_index_shift;
-    char *shift;
-    shift = calloc(new_len_str, sizeof(char));
+            ++str;
+        }
 
-    while((shift = strstr(str, substr_from)) != NULL) {
-        start_index_shift = strlen(str) - strlen(shift);
-        strncat(buffer, str, start_index_shift);
-        strcat(buffer, substr_to);
-        str = str + start_index_shift + substr_from_len;
-        ++i;
-    };
+        strcat(buffer, new);
 
-    strcat(buffer, str);
-    str = str - str_len + strlen(str);
+    } else {
 
-    // str = realloc(str, strlen(buffer) * sizeof(buffer) + 10000);
-    strcpy(str, buffer);
+        buffer = malloc(sizeof(char));
 
-    free(shift);
-    free(buffer);
-*/
-    return 0;
+        while ((rest_str = strstr(str, old)) != NULL) {
+
+            len = strlen(str) - strlen(rest_str);
+            buffer = realloc(buffer, strlen(buffer) + len + new_len);
+
+            strncat(buffer, str, len);
+            strcat(buffer, new);
+
+            str += (len + old_len);
+        }
+        if (str != NULL) {
+            len = strlen(buffer) + strlen(str);
+            if (len == 0)
+                ++len;
+            buffer = realloc(buffer, len);
+            strcat(buffer, str);
+        }
+    }
+
+    return buffer;
 }
 
 
@@ -1220,6 +1233,41 @@ test_str_trim()
 
     for (int i = 0; i < 10; ++i) {
         printf("\"%s\" --> \"%s\"\n", data[i], str_trim(data[i]));
+    }
+}
+
+
+void
+test_str_replace()
+{
+    #define COUNT 14
+
+    char *data[COUNT][3] = {
+        { "Simple file", "", "*/?$" },
+        { "Simple file a file 2 of file me", "", "_" },
+        { "Simple file a file 2 of file me", "ZZZ", "" },
+        { "Simple", "ZZ", "AA" },
+        { "Simple file a file 2 of file me", "!!", "AAA" },
+        { "exmaeEeple", "e", "!" },
+        { "", "", "" },
+        { "''''''", "'", "\"" },
+        { "TXTSS", "", "????" },
+        { "", "Z", "AAA" },
+        { " 1  2   3    4   ", "   ", "*" },
+        { "Simple file a file 2 of file me", "file", "dir" },
+        { "Simple file a file 2 of file me", "file", "" },
+        { "Simple file a file 2 of file me", "", "" }
+    };
+
+    char *str;
+
+    for (unsigned int i = 0; i < COUNT; ++i) {
+        str = str_replace(data[i][0], data[i][1], data[i][2]);
+        printf(
+            "%s | \"%s\" --> \"%s\" | %s %li\n",
+            data[i][0], data[i][1], data[i][2],
+            str, strlen(str)
+        );
     }
 }
 

@@ -14,13 +14,13 @@
  * Not implemented
  */
 void
-stream_read_lines(FILE *stream) {
+stream_readlines(FILE *stream) {
 }
 
 
 // https://dev.w3.org/libwww/Library/src/vms/getline.c
 void
-stream_read_line(FILE *stream)
+stream_readline(FILE *stream)
 {
 
 }

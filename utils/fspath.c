@@ -1,5 +1,8 @@
 /**
  * Utils for working with paths in a system
+ *
+ * http://www.computerhope.com/unix/test.htm
+ *
  */
 
 
@@ -13,14 +16,110 @@
 #include <errno.h>
 #include <time.h>
 
-// #include <dirent.h>
-// #include <sys/stat.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include "pprint.h"
 #include "testing/unittest.h"
 
 
-extern int errno;
+
+// http://stackoverflow.com/questions/13792116/recursively-remove-directories
+// http://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c
+// http://stackoverflow.com/questions/5467725/how-to-delete-a-directory-and-its-contents-in-posix-c
+// http://stackoverflow.com/questions/2256945/removing-a-non-empty-directory-programmatically-in-c-or-c
+// http://stackoverflow.com/questions/7977501/recursively-remove-a-directory-using-c
+void
+fspath_rmtree(const char path[])
+{
+    size_t path_len;
+    char *full_path;
+    DIR *dir;
+    struct stat stat_path, stat_entry;
+    struct dirent *entry;
+
+    // stat for the path
+    stat(path, &stat_path);
+
+    // if path does not exists or is not dir - exit with status -1
+    if (S_ISDIR(stat_path.st_mode) == 0) {
+        fprintf(stderr, "%s: %s\n", "Is not directory", path);
+        exit(-1);
+    }
+
+    // if not possible to read the directory for this user
+    if ((dir = opendir(path)) == NULL) {
+        fprintf(stderr, "%s: %s\n", "Can`t open directory", path);
+        exit(-1);
+    }
+
+    // the length of the path
+    path_len = strlen(path);
+
+    // iteration through entries in the directory
+    while ((entry = readdir(dir)) != NULL) {
+
+        // skip entries "." and ".."
+        if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
+            continue;
+
+        // determinate a full path of an entry
+        full_path = calloc(path_len + strlen(entry->d_name) + 1, sizeof(char));
+        strcpy(full_path, path);
+        strcat(full_path, "/");
+        strcat(full_path, entry->d_name);
+
+        // stat for the entry
+        stat(full_path, &stat_entry);
+
+        // recursively remove a nested directory
+        if (S_ISDIR(stat_entry.st_mode) != 0) {
+            rmtree(full_path);
+            continue;
+        }
+
+        // remove a file object
+        unlink(full_path);
+    }
+
+    // remove the devastated directory and close the object of it
+    rmdir(path);
+    closedir(dir);
+}
+
+
+int
+copy_file(char path1[], char path2[])
+{
+    char chr;
+    FILE *stream_for_write, *stream_for_read;
+
+    if ((stream_for_write = fopen(path1, "w")) == NULL) {
+        fprintf(
+            stderr, "%s: %s\n",
+            gettext("Impossible to create a file"), path1
+        );
+        return -1;
+    }
+
+    if ((stream_for_read = fopen(path2, "r")) == NULL) {
+        fprintf(
+            stderr, "%s: %s\n",
+            gettext("Impossible to read a file"), path2
+        );
+        return -1;
+    }
+
+    while ((chr = fgetc(stream_for_read)) != EOF) {
+        fputc(chr, stream_for_write);
+    }
+
+    fclose(stream_for_write);
+    fclose(stream_for_read);
+
+    return 0;
+}
 
 
 bool
@@ -221,6 +320,15 @@ fspath_relativeTo(const char path[])
 
 bool
 fspath_resolve(const char path[])
+{
+    return false;
+}
+
+
+// https://en.wikipedia.org/wiki/GNU_Find_Utilities
+// https://en.wikipedia.org/wiki/Find
+bool
+fspath_find(const char pattern[])
 {
     return false;
 }

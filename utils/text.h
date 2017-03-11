@@ -20,10 +20,9 @@ typedef struct _CounterWords {
 } CounterWords;
 
 
-
 // Need rewrite
 char **
-text_get_words(char text[], unsigned int *length)
+text_get_total_words(char text[], unsigned int *length)
 { /*
     char *word;
 
@@ -56,10 +55,38 @@ text_get_count_words(char text[])
 
 // Need mapping (dictionary)
 char **
-counter_words(CounterWords *counter_words, char text[])
+text_counter_words(CounterWords *counter_words, char text[])
 {
     return NULL;
 }
+
+char *
+text_get_word(char text[], unsigned int n)
+{
+    return NULL;
+}
+
+
+char **
+text_search_words(char text[], char pattern[])
+{
+    return NULL;
+}
+
+
+char **
+text_get_words(char text[], unsigned int index_from, unsigned int index_to)
+{
+    return NULL;
+}
+
+
+char *
+text_get_words(char text[], char pattern[])
+{
+    return NULL;
+}
+
 
 
 /*

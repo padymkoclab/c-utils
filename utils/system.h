@@ -17,8 +17,12 @@
 #include "platform.h"
 
 #if IS_POSIX_SYSTEM == 1
+
+    #include <unistd.h>
+
     #include <sys/statvfs.h>
     #include <sys/utsname.h>
+    #include <sys/sysinfo.h>
 
     #include <X11/Xlib.h>
 #endif
@@ -196,9 +200,18 @@ system_print_display_resolution_by_X11()
 
 
 unsigned short int
-system_get_count_kernels()
+system_count_kernels()
 {
-    return 0;
+    putd(get_nprocs_conf());
+    putd(get_nprocs());
+    return sysconf(_SC_NPROCESSORS_ONLN);
+}
+
+
+void
+system_byteorder()
+{
+
 }
 
 

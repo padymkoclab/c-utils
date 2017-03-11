@@ -1,3 +1,9 @@
 
 *.sublime-workspace
 main.c
+main
+a.out
+
+build/
+_start
+

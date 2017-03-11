@@ -17,12 +17,13 @@
 			"file_include_patterns":
 			[
 				"A",
-				"Light/мудрость"
+				"мудрость"
 			],
 			"folder_exclude_patterns":
 			[
 				".hg",
-				"Шта"
+				"Шта",
+				"Light"
 			],
 			"path": "../../../Private/"
 		}

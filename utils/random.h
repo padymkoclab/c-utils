@@ -90,7 +90,7 @@ random_choice_string(char *strings[], const unsigned int length)
 
 
 char *
-random_string(unsigned int min_length, unsigned int max_length)
+random_word(unsigned int min_length, unsigned int max_length)
 {
     if (min_length < 1 || max_length < 1 || min_length > max_length)
         return NULL;
@@ -174,7 +174,7 @@ random_dirpath()
         if (random_boolean() == true)
             strcat(path, ".");
 
-        strcat(path, random_string(1, 17));
+        strcat(path, random_word(1, 17));
         strcat(path, "/");
     }
 
@@ -217,7 +217,7 @@ random_filepath()
         strcat(path, ".");
 
     // a filename
-    strcat(path, random_string(1, 15));
+    strcat(path, random_word(1, 15));
 
     // add an extension to the file, if it is not hidden
     if (is_hidden == false) {
@@ -232,6 +232,57 @@ random_filepath()
 }
 
 
+char *
+random_sentence(unsigned int min_count_words, unsigned int max_count_words)
+{
+    char *word;
+    unsigned int len = sizeof(char);
+    char *sentence = malloc(len);
+
+    int count_words = random_integer(min_count_words, max_count_words);
+
+    for (int i = 0; i < count_words; ++i) {
+        word = random_word(3, 15);
+        len += (sizeof(char) * strlen(word) + 1);
+
+        if (i == 0)
+            word[0] = toupper(word[0]);
+
+        sentence = realloc(sentence, len);
+
+        strcat(sentence, word);
+
+        if (i + 1 != count_words)
+            strcat(sentence, " ");
+        else
+            strcat(sentence, ".");
+    }
+
+    return sentence;
+}
+
+
+char *
+random_text()
+{
+    unsigned int len = sizeof(char);
+    char *text = malloc(len);
+    char *sentence;
+
+    unsigned int count_sentences = random_integer(3, 5);
+
+    while(count_sentences-- > 0) {
+        sentence = random_sentence(3, 10);
+        len += (sizeof(char) * strlen(sentence) + 1);
+        text = realloc(text, len);
+        strcpy(text, sentence);
+        strcat(text, " ");
+    }
+
+    return text;
+}
+
+
 // random_date
 // random_time
 // random_datetime
@@ -240,7 +291,6 @@ random_filepath()
 // random_name
 // random_phonenumber
 // random_sentence
-// random_text
 // random_username
 // random_password
 // random_email
@@ -409,39 +459,39 @@ test_random_choice_from_array()
 
 
 void
-test_random_string()
+test_random_word()
 {
     char *word;
     word = calloc(20, sizeof(char));
 
-    assertNull(random_string(0, 10));
-    assertNull(random_string(-1, 5));
-    assertNull(random_string(-10, -3));
-    assertNull(random_string(5, 0));
-    assertNull(random_string(0, 0));
+    assertNull(random_word(0, 10));
+    assertNull(random_word(-1, 5));
+    assertNull(random_word(-10, -3));
+    assertNull(random_word(5, 0));
+    assertNull(random_word(0, 0));
 
-    word = random_string(1, 20);
+    word = random_word(1, 20);
     assertInRange(strlen(word), 1, 20);
 
-    word = random_string(2, 20);
+    word = random_word(2, 20);
     assertInRange(strlen(word), 2, 20);
 
-    word = random_string(3, 20);
+    word = random_word(3, 20);
     assertInRange(strlen(word), 3, 20);
 
-    word = random_string(4, 20);
+    word = random_word(4, 20);
     assertInRange(strlen(word), 4, 20);
 
-    word = random_string(5, 20);
+    word = random_word(5, 20);
     assertInRange(strlen(word), 5, 20);
 
-    word = random_string(10, 20);
+    word = random_word(10, 20);
     assertInRange(strlen(word), 10, 20);
 
-    word = random_string(19, 20);
+    word = random_word(19, 20);
     assertInRange(strlen(word), 19, 20);
 
-    word = random_string(20, 20);
+    word = random_word(20, 20);
     assertEquals(strlen(word), 20);
 }
 
@@ -534,7 +584,7 @@ test_random()
     test_random_choice_char();
     test_random_choice_string();
     test_random_choice_from_array();
-    test_random_string();
+    test_random_word();
     test_random_file_extension();
     test_random_dirpath();
     test_random_filepath();
